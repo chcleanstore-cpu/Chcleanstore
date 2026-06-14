@@ -417,7 +417,6 @@
 
 <button class="fab" id="addProductBtn" style="display: none;">+</button>
 
-<!-- مودال تسجيل الدخول -->
 <div id="loginModal" class="modal" onclick="closeModalOnOutsideClick(event, 'loginModal')" style="display: flex;">
   <div class="modal-content" onclick="event.stopPropagation()" style="text-align:center;">
     <img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" style="width:80px; margin-bottom:16px;">
@@ -428,7 +427,6 @@
   </div>
 </div>
 
-<!-- مودال إضافة / تعديل منتج -->
 <div id="productModal" class="modal" onclick="closeModalOnOutsideClick(event, 'productModal')">
   <div class="modal-content" onclick="event.stopPropagation()">
     <span onclick="closeModal('productModal')" style="position: absolute; top: 15px; left: 20px; font-size: 24px; cursor: pointer; color: #aaa;">&times;</span>
@@ -452,7 +450,6 @@
   </div>
 </div>
 
-<!-- مودال إدارة المستخدمين -->
 <div id="usersModal" class="modal" onclick="closeModalOnOutsideClick(event, 'usersModal')">
   <div class="modal-content" onclick="event.stopPropagation()">
     <span onclick="closeModal('usersModal')" style="position: absolute; top: 15px; left: 20px; font-size: 24px; cursor: pointer; color: #aaa;">&times;</span>
@@ -469,7 +466,6 @@
   </div>
 </div>
 
-<!-- مودال إعدادات المالك -->
 <div id="ownerModal" class="modal" onclick="closeModalOnOutsideClick(event, 'ownerModal')">
   <div class="modal-content" onclick="event.stopPropagation()">
     <span onclick="closeModal('ownerModal')" style="position: absolute; top: 15px; left: 20px; font-size: 24px; cursor: pointer; color: #aaa;">&times;</span>
@@ -580,6 +576,33 @@
     }
   }
 
+  // ============================================================
+  // دالة إنشاء الطلب (يتم استدعاؤها من صفحة العميل)
+  // هذه الدالة يجب أن تكون موجودة في صفحة السلة
+  // ============================================================
+  function createOrder(customerName, phone, address, cart) {
+    const items = cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        serial: item.serial || '---',
+        quantity: item.quantity,
+        price: item.price
+    }));
+    
+    const totalPrice = items.reduce((sum, it) => sum + (it.price * it.quantity), 0);
+    
+    const order = {
+        customerName: customerName,
+        phone: phone,
+        address: address,
+        items: items,
+        totalPrice: totalPrice,
+        timestamp: Date.now()
+    };
+    
+    return push(ordersRef, order);
+  }
+
   async function printAndConfirmOrder(key, order) {
     const currentUserName = localStorage.getItem("user") || "Admin";
     printInvoice(order, currentUserName);
@@ -591,7 +614,7 @@
   }
 
   // ============================================================
-  // دالة الطباعة للفاتورة العادية (أبيض وأسود - فرنسي)
+  // دالة الطباعة للفاتورة العادية - مع عمود Réf
   // ============================================================
   function printInvoice(order, sellerName) {
     let rows = "";
@@ -605,6 +628,7 @@
         rows += `
           <tr>
             <td style="border:1px solid #000;padding:6px;text-align:center;">${idx + 1}</td>
+            <td style="border:1px solid #000;padding:6px;text-align:center;">${escapeHtml(it.serial || '---')}</td>
             <td style="border:1px solid #000;padding:6px;text-align:left;">${escapeHtml(it.name || '')}</td>
             <td style="border:1px solid #000;padding:6px;text-align:center;">${qty}</td>
             <td style="border:1px solid #000;padding:6px;text-align:right;">${price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
@@ -633,7 +657,7 @@
             padding: 20px;
             background: white;
           }
-          .facture { max-width: 800px; margin: 0 auto; background: white; }
+          .facture { max-width: 900px; margin: 0 auto; background: white; }
           .header { text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #000; }
           .logo { margin-bottom: 5px; }
           .logo img { width: 50px; height: 50px; }
@@ -644,7 +668,7 @@
           .date-signature { display: flex; justify-content: space-between; margin: 10px 0; }
           table { width: 100%; border-collapse: collapse; margin: 10px 0; }
           th, td { border: 1px solid #000; padding: 6px; }
-          th { text-align: center; font-weight: bold; }
+          th { text-align: center; font-weight: bold; background: #f5f5f5; }
           .totals { margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px; }
           .totals-row { display: flex; justify-content: space-between; margin: 5px 0; }
           .footer { margin-top: 20px; text-align: center; font-size: 10px; border-top: 1px dashed #000; padding-top: 10px; }
@@ -680,6 +704,7 @@
             <thead>
               <tr>
                 <th>N°</th>
+                <th>Réf</th>
                 <th style="text-align:left;">DESIGNATION</th>
                 <th>QTE</th>
                 <th>P.U TTC</th>
@@ -687,7 +712,7 @@
               </tr>
             </thead>
             <tbody>
-              ${rows || '<tr><td colspan="5" style="text-align:center;">Aucun produit</td></tr>'}
+              ${rows || '<tr><td colspan="6" style="text-align:center;">Aucun produit</td><td style="display:none;"></td><td style="display:none;"></td><td style="display:none;"></td><td style="display:none;"></td><td style="display:none;"></td></tr>'}
             </tbody>
           </table>
 
@@ -720,7 +745,7 @@
   }
 
   // ============================================================
-  // دالة الطباعة للفاتورة المؤكدة (أبيض وأسود - فرنسي)
+  // دالة الطباعة للفاتورة المؤكدة - مع عمود Réf
   // ============================================================
   function printConfirmedOrder(order, sellerName) {
     let rows = "";
@@ -734,6 +759,7 @@
         rows += `
           <tr>
             <td style="border:1px solid #000;padding:6px;text-align:center;">${idx + 1}</td>
+            <td style="border:1px solid #000;padding:6px;text-align:center;">${escapeHtml(it.serial || '---')}</td>
             <td style="border:1px solid #000;padding:6px;text-align:left;">${escapeHtml(it.name || '')}</td>
             <td style="border:1px solid #000;padding:6px;text-align:center;">${qty}</td>
             <td style="border:1px solid #000;padding:6px;text-align:right;">${price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
@@ -763,7 +789,7 @@
             padding: 20px;
             background: white;
           }
-          .facture { max-width: 800px; margin: 0 auto; background: white; }
+          .facture { max-width: 900px; margin: 0 auto; background: white; }
           .header { text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #000; }
           .logo { margin-bottom: 5px; }
           .logo img { width: 50px; height: 50px; }
@@ -775,7 +801,7 @@
           .confirmed-info { margin: 10px 0; padding: 5px; border: 1px solid #000; text-align: center; }
           table { width: 100%; border-collapse: collapse; margin: 10px 0; }
           th, td { border: 1px solid #000; padding: 6px; }
-          th { text-align: center; font-weight: bold; }
+          th { text-align: center; font-weight: bold; background: #f5f5f5; }
           .totals { margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px; }
           .totals-row { display: flex; justify-content: space-between; margin: 5px 0; }
           .footer { margin-top: 20px; text-align: center; font-size: 10px; border-top: 1px dashed #000; padding-top: 10px; }
@@ -808,22 +834,26 @@
           </div>
 
           <div class="confirmed-info">
-            <p><strong>✓ bon de livraison ✓</strong></p>
+            <p><strong>✓ BON DE LIVRAISON ✓</strong></p>
             <p>Confirmée par : ${escapeHtml(order.confirmedBy || sellerName || 'Admin')} le : ${confirmedDate}</p>
           </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>N°</th>
-                <th style="text-align:left;">DESIGNATION</th>
-                <th>QTE</th>
-                <th>P.U TTC</th>
-                <th>TOTAL</th>
-              </tr>
-            </thead>
+          <div style="text-align:center; margin:10px 0; font-weight:bold; font-size:14px;">
+  Bon de livraison
+</div>
+<table>
+  <thead>
+    <tr>
+      <th>N°</th>
+      <th>Réf</th>
+      <th style="text-align:left;">DESIGNATION</th>
+      <th>QTE</th>
+      <th>P.U TTC</th>
+      <th>TOTAL</th>
+    </tr>
+  </thead>
             <tbody>
-              ${rows || '<tr><td colspan="5" style="text-align:center;">Aucun produit</td></tr>'}
+              ${rows || '<tr><td colspan="6" style="text-align:center;">Aucun produit</td><td style="display:none;"></td><td style="display:none;"></td><td style="display:none;"></td><td style="display:none;"></td><td style="display:none;"></td></tr>'}
             </tbody>
           </table>
 
@@ -856,7 +886,7 @@
   }
 
   // ============================================================
-  // باقي دوال العرض الأساسية
+  // باقي دوال العرض
   // ============================================================
   function renderProducts(page) {
     const container = document.getElementById("productsContainer");
@@ -1009,7 +1039,7 @@
           itemsHtml += `<div style="display:flex; gap:8px; padding:6px 0; border-bottom:1px solid #eee;">
             <span style="color:#27ae60; font-weight:bold;">${it.quantity}</span>
             <span style="flex:1;">${escapeHtml(it.name)}</span>
-            <span style="background:#efefef; padding:2px 8px; border-radius:20px;">#${it.serial || '-'}</span>
+            <span style="background:#efefef; padding:2px 8px; border-radius:20px;">#${escapeHtml(it.serial || '-')}</span>
             <span>${(it.price * it.quantity).toLocaleString()} دج</span>
           </div>`;
         });
@@ -1019,10 +1049,10 @@
       orderDiv.className = "order-card whatsapp-orders";
       orderDiv.innerHTML = `
         <div class="order-header">
-          <span><i class="fab fa-whatsapp" style="color:#25D366;"></i> ${order.customerName}</span>
+          <span><i class="fab fa-whatsapp" style="color:#25D366;"></i> ${escapeHtml(order.customerName)}</span>
           <span class="whatsapp-badge">WhatsApp</span>
         </div>
-        <div>📞 ${order.phone}</div>
+        <div>📞 ${escapeHtml(order.phone)}</div>
         <div>📍 ${escapeHtml(order.address)}</div>
         <div class="order-items">${itemsHtml}</div>
         <div style="font-weight:bold; margin:10px 0;">💰 الإجمالي: ${order.totalPrice.toLocaleString()} دج</div>
@@ -1079,7 +1109,7 @@
           itemsHtml += `<div style="display:flex; gap:8px; padding:6px 0; border-bottom:1px solid #eee;">
             <span style="color:#f39c12; font-weight:bold;">${it.quantity}</span>
             <span style="flex:1;">${escapeHtml(it.name)}</span>
-            <span style="background:#efefef; padding:2px 8px; border-radius:20px;">#${it.serial || '-'}</span>
+            <span style="background:#efefef; padding:2px 8px; border-radius:20px;">#${escapeHtml(it.serial || '-')}</span>
             <span>${(it.price * it.quantity).toLocaleString()} دج</span>
           </div>`;
         });
@@ -1091,12 +1121,12 @@
       orderDiv.className = "order-card confirmed-card";
       orderDiv.innerHTML = `
         <div class="order-header">
-          <span><i class="fas fa-check-circle" style="color:#f39c12;"></i> ${order.customerName}</span>
+          <span><i class="fas fa-check-circle" style="color:#f39c12;"></i> ${escapeHtml(order.customerName)}</span>
           <span class="confirmed-badge">مؤكد</span>
         </div>
-        <div>📞 ${order.phone}</div>
+        <div>📞 ${escapeHtml(order.phone)}</div>
         <div>📍 ${escapeHtml(order.address)}</div>
-        <div style="font-size:12px; color:#888;">✅ تم التأكيد بواسطة: ${order.confirmedBy || 'Admin'} | ${confirmedDate}</div>
+        <div style="font-size:12px; color:#888;">✅ تم التأكيد بواسطة: ${escapeHtml(order.confirmedBy || 'Admin')} | ${confirmedDate}</div>
         <div class="order-items">${itemsHtml}</div>
         <div style="font-weight:bold; margin:10px 0;">💰 الإجمالي: ${order.totalPrice.toLocaleString()} دج</div>
         <div class="order-footer">
@@ -1252,7 +1282,7 @@
     if(ownerSnap.exists()) {
       Object.entries(ownerSnap.val()).forEach(([name, val]) => {
         listDiv.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; margin:8px 0; padding:8px; background:#f0fdf4; border-radius:12px;">
-          <span><strong>${name}</strong> <span style="color:#10b981;">(مالك)</span></span>
+          <span><strong>${escapeHtml(name)}</strong> <span style="color:#10b981;">(مالك)</span></span>
           <button disabled style="background:#ccc; padding:4px 12px; border-radius:20px;">لا يمكن الحذف</button>
         </div>`;
       });
@@ -1262,7 +1292,7 @@
     if(adminsSnap.exists()) {
       Object.entries(adminsSnap.val()).forEach(([name, val]) => {
         listDiv.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; margin:8px 0; padding:8px; background:#fff; border-radius:12px;">
-          <span><strong>${name}</strong> <span style="color:#f39c12;">(مدير)</span></span>
+          <span><strong>${escapeHtml(name)}</strong> <span style="color:#f39c12;">(مدير)</span></span>
           <button onclick="deleteUser('${name}', 'admin')" style="background:#e74c3c; color:white; border:none; padding:4px 12px; border-radius:20px;">حذف</button>
         </div>`;
       });
@@ -1272,7 +1302,7 @@
     if(sellersSnap.exists()) {
       Object.entries(sellersSnap.val()).forEach(([name, val]) => {
         listDiv.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; margin:8px 0; padding:8px; background:#fff; border-radius:12px;">
-          <span><strong>${name}</strong> <span style="color:#3498db;">(بائع)</span></span>
+          <span><strong>${escapeHtml(name)}</strong> <span style="color:#3498db;">(بائع)</span></span>
           <button onclick="deleteUser('${name}', 'seller')" style="background:#e74c3c; color:white; border:none; padding:4px 12px; border-radius:20px;">حذف</button>
         </div>`;
       });
