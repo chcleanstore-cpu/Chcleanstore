@@ -602,8 +602,8 @@
           <td style="border:1px solid #000;padding:6px;font-size:10px;font-weight:600;white-space:normal;word-break:break-word;">${escapeHtml(it.name)}</td>
           <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;">${it.serial || '---'}</td>
           <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;">${it.quantity || 0}</td>
-          <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;">${(it.price || 0).toLocaleString()} DZD}</td>
-          <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;font-weight:bold;">${((it.price || 0) * (it.quantity || 0)).toLocaleString()} DZD}</td>
+          <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;">${(it.price || 0).toLocaleString()} DZD</td>
+          <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;font-weight:bold;">${((it.price || 0) * (it.quantity || 0)).toLocaleString()} DZD</td>
         </tr>`;
       });
     }
@@ -682,49 +682,49 @@
   }
 
   // ============================================================
-  // عرض المنتجات (أزرار التعديل والحذف للمالك والمدير فقط)
+  // عرض المنتجات (المالك والمدير كلاهما يمتلك صلاحية التعديل والحذف)
   // ============================================================
   function renderProducts(page) {
-  const container = document.getElementById("productsContainer");
-  if (!container) return;
-  container.innerHTML = "";
-  const arr = Object.entries(filtered).filter(([_,p]) => !p.hidden);
-  const total = Math.ceil(arr.length / PER_PAGE);
-  if (page > total) page = 1;
-  const start = (page-1)*PER_PAGE;
-  const items = arr.slice(start, start+PER_PAGE);
-  if(!items.length) { container.innerHTML = "<div class='no-data'>لا توجد منتجات</div>"; renderPagination(0); return; }
-  
-  // ✅ المالك والمدير كلاهما يريان أزرار التعديل والحذف
-  const canEdit = isOwner() || isAdmin();
-  
-  items.forEach(([id, prod]) => {
-    const card = document.createElement("div");
-    card.className = "product-card";
-    if(prod.hidden) card.classList.add("hidden-product");
-    card.innerHTML = `
-      <img src="${prod.imageUrl || 'https://via.placeholder.com/150'}" onerror="this.src='https://via.placeholder.com/150'">
-      <div class="product-info">
-        <div class="product-name">${escapeHtml(prod.name)}</div>
-        <div class="product-price">${Number(prod.price).toLocaleString()} دج</div>
-        <div class="product-stock">📦 المخزون: ${prod.pack || 0}</div>
-        <div class="product-actions">
-          ${canEdit ? `<button class="btn-icon btn-edit" data-id="${id}"><i class="fas fa-edit"></i> تعديل</button>` : ''}
-          ${canEdit ? `<button class="btn-icon btn-delete" data-id="${id}"><i class="fas fa-trash"></i> حذف</button>` : ''}
+    const container = document.getElementById("productsContainer");
+    if (!container) return;
+    container.innerHTML = "";
+    const arr = Object.entries(filtered).filter(([_,p]) => !p.hidden);
+    const total = Math.ceil(arr.length / PER_PAGE);
+    if (page > total) page = 1;
+    const start = (page-1)*PER_PAGE;
+    const items = arr.slice(start, start+PER_PAGE);
+    if(!items.length) { container.innerHTML = "<div class='no-data'>لا توجد منتجات</div>"; renderPagination(0); return; }
+    
+    // ✅ تصحيح: المالك أو المدير يريان أزرار التعديل والحذف
+    const canEdit = (isOwner() || isAdmin());
+    
+    items.forEach(([id, prod]) => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      if(prod.hidden) card.classList.add("hidden-product");
+      card.innerHTML = `
+        <img src="${prod.imageUrl || 'https://via.placeholder.com/150'}" onerror="this.src='https://via.placeholder.com/150'">
+        <div class="product-info">
+          <div class="product-name">${escapeHtml(prod.name)}</div>
+          <div class="product-price">${Number(prod.price).toLocaleString()} دج</div>
+          <div class="product-stock">📦 المخزون: ${prod.pack || 0}</div>
+          <div class="product-actions">
+            ${canEdit ? `<button class="btn-icon btn-edit" data-id="${id}"><i class="fas fa-edit"></i> تعديل</button>` : ''}
+            ${canEdit ? `<button class="btn-icon btn-delete" data-id="${id}"><i class="fas fa-trash"></i> حذف</button>` : ''}
+          </div>
         </div>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-  
-  document.querySelectorAll(".btn-edit").forEach(btn => {
-    btn.addEventListener("click", (e) => { e.stopPropagation(); editProduct(btn.dataset.id); });
-  });
-  document.querySelectorAll(".btn-delete").forEach(btn => {
-    btn.addEventListener("click", (e) => { e.stopPropagation(); deleteProduct(btn.dataset.id); });
-  });
-  renderPagination(total);
-}
+      `;
+      container.appendChild(card);
+    });
+    
+    document.querySelectorAll(".btn-edit").forEach(btn => {
+      btn.addEventListener("click", (e) => { e.stopPropagation(); editProduct(btn.dataset.id); });
+    });
+    document.querySelectorAll(".btn-delete").forEach(btn => {
+      btn.addEventListener("click", (e) => { e.stopPropagation(); deleteProduct(btn.dataset.id); });
+    });
+    renderPagination(total);
+  }
 
   function renderPagination(total) {
     const pagination = document.getElementById("pagination");
