@@ -357,6 +357,18 @@
       cursor: pointer;
       font-weight: bold;
     }
+    .print-btn {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .print-btn:hover { background: #2980b9; }
   </style>
 </head>
 <body>
@@ -535,20 +547,17 @@
     }
   }
 
-  // ============================================================
-  // صلاحيات القائمة المنسدلة
-  // ============================================================
   function updateMenuPermissions() {
     const role = getRole();
     const isOwnerRole = role === "owner";
     const isAdminRole = role === "admin";
     
     const btns = {
-      btnCover: isOwnerRole || isAdminRole,      // المالك والمدير فقط
-      btnUsers: isOwnerRole,                      // المالك فقط
-      btnOwnerSettings: isOwnerRole,              // المالك فقط
-      btnDeleteAllProducts: isOwnerRole,          // المالك فقط
-      btnLogout: true                             // الجميع
+      btnCover: isOwnerRole || isAdminRole,
+      btnUsers: isOwnerRole,
+      btnOwnerSettings: isOwnerRole,
+      btnDeleteAllProducts: isOwnerRole,
+      btnLogout: true
     };
     
     for (let [id, show] of Object.entries(btns)) {
@@ -666,7 +675,7 @@
               </tr>
             </thead>
             <tbody>${rows}</tbody>
-          </table>
+          追赶
           <div class="total">Total: ${order.totalPrice.toLocaleString()} DZD</div>
           <div class="footer no-print">
             <button onclick="window.print()">🖨️ Imprimer</button>
@@ -681,9 +690,6 @@
     win.document.close();
   }
 
-  // ============================================================
-  // عرض المنتجات (المالك والمدير كلاهما يمتلك صلاحية التعديل والحذف)
-  // ============================================================
   function renderProducts(page) {
     const container = document.getElementById("productsContainer");
     if (!container) return;
@@ -695,7 +701,6 @@
     const items = arr.slice(start, start+PER_PAGE);
     if(!items.length) { container.innerHTML = "<div class='no-data'>لا توجد منتجات</div>"; renderPagination(0); return; }
     
-    // ✅ تصحيح: المالك أو المدير يريان أزرار التعديل والحذف
     const canEdit = (isOwner() || isAdmin());
     
     items.forEach(([id, prod]) => {
@@ -773,9 +778,6 @@
     createBtn("›", currentPage + 1, false, currentPage === total);
   }
 
-  // ============================================================
-  // عرض المنتجات المخفية (للمالك والمدير فقط)
-  // ============================================================
   function renderHidden() {
     const container = document.getElementById("hiddenProductsContainer");
     if (!container) return;
@@ -789,7 +791,6 @@
     const hidden = Object.entries(allProducts).filter(([_,p]) => p.hidden);
     if(!hidden.length) { container.innerHTML = "<div class='no-data'>لا توجد منتجات مخفية</div>"; return; }
     
-    // المالك والمدير يريان المنتجات المخفية
     hidden.forEach(([id, prod]) => {
       const card = document.createElement("div");
       card.className = "product-card";
@@ -888,6 +889,97 @@
     });
   }
 
+  // دالة لطباعة طلب مؤكد
+  function printConfirmedOrder(order, sellerName) {
+    let rows = "";
+    if (order.items && Array.isArray(order.items)) {
+      order.items.forEach((it, idx) => {
+        rows += `<tr>
+          <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;">${idx + 1}</td>
+          <td style="border:1px solid #000;padding:6px;font-size:10px;font-weight:600;white-space:normal;word-break:break-word;">${escapeHtml(it.name)}</td>
+          <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;">${it.serial || '---'}</td>
+          <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;">${it.quantity || 0}</td>
+          <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;">${(it.price || 0).toLocaleString()} DZD</td>
+          <td style="border:1px solid #000;padding:6px;font-size:10px;text-align:center;font-weight:bold;">${((it.price || 0) * (it.quantity || 0)).toLocaleString()} DZD</td>
+        </tr>`;
+      });
+    }
+
+    const win = window.open();
+    win.document.write(`
+      <!DOCTYPE html>
+      <html dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <title>Bon de livraison - ${STORE_NAME}</title>
+        <style>
+          body { font-family: 'Cairo', sans-serif; padding: 20px; margin: 0; }
+          .invoice { max-width: 800px; margin: 0 auto; border: 1px solid #ddd; padding: 20px; border-radius: 15px; }
+          .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+          .header img { width: 60px; }
+          .header h1 { color: #10b981; margin: 0; font-size: 18px; }
+          .info { margin-bottom: 20px; padding: 10px; background: #f5f5f5; border-radius: 10px; display: flex; justify-content: space-between; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          th, td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 10px; }
+          th { background: #f0f0f0; }
+          .total { font-size: 16px; font-weight: bold; text-align: left; margin-top: 10px; }
+          .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+          .confirmed-date { font-size: 12px; color: #888; margin-top: 10px; }
+          @media print {
+            body { margin: 0; padding: 0; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="invoice">
+          <div class="header">
+            <div>
+              <img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo">
+              <div style="font-weight:bold;">Bébé kids DZ</div>
+              <div style="font-size:12px;color:#555;">Algérie</div>
+            </div>
+            <div style="text-align:left;">
+              <div><b>Bon de livraison</b></div>
+              <div>Date: ${new Date().toLocaleDateString('fr-FR')}</div>
+            </div>
+          </div>
+          <hr>
+          <div class="info">
+            <div>
+              <b>Client:</b><br>
+              ${escapeHtml(order.customerName)}<br>
+              ${order.phone}<br>
+              ${escapeHtml(order.address)}
+            </div>
+            <div>
+              <b>Vendeur:</b><br>
+              ${escapeHtml(sellerName)}
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Produit</th><th>Référence</th><th>Qté</th><th>Prix</th><th>Total</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <div class="total">Total: ${order.totalPrice.toLocaleString()} DZD</div>
+          <div class="confirmed-date">✅ تم التأكيد بواسطة: ${order.confirmedBy || 'Admin'} | ${order.confirmedAt ? new Date(order.confirmedAt).toLocaleString('ar-DZ') : '---'}</div>
+          <div class="footer no-print">
+            <button onclick="window.print()">🖨️ Imprimer</button>
+          </div>
+        </div>
+        <script>
+          window.onload = function() { setTimeout(() => window.print(), 500); };
+        <\/script>
+      </body>
+      </html>
+    `);
+    win.document.close();
+  }
+
   function renderConfirmedOrders(confirmedData) {
     const container = document.getElementById("confirmedOrdersContainer");
     if (!container) return;
@@ -931,12 +1023,24 @@
         <div class="order-items">${itemsHtml}</div>
         <div style="font-weight:bold; margin:10px 0;">💰 الإجمالي: ${order.totalPrice.toLocaleString()} دج</div>
         <div class="order-footer">
+          <button class="print-confirmed-order" data-order='${JSON.stringify(order).replace(/'/g, "&#39;")}' style="background:#3498db; color:white; border:none; padding:8px 16px; border-radius:30px; cursor:pointer;">
+            <i class="fas fa-print"></i> طباعة
+          </button>
           <button class="delete-confirmed-order" data-key="${key}" style="background:#e74c3c; color:white; border:none; padding:8px 16px; border-radius:30px; cursor:pointer;">
             <i class="fas fa-trash"></i> حذف
           </button>
         </div>
       `;
       container.appendChild(orderDiv);
+    });
+    
+    document.querySelectorAll(".print-confirmed-order").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const order = JSON.parse(btn.dataset.order);
+        const sellerName = order.confirmedBy || localStorage.getItem("user") || "Admin";
+        printConfirmedOrder(order, sellerName);
+        showToast("🖨️ جاري فتح الطباعة...");
+      });
     });
     
     document.querySelectorAll(".delete-confirmed-order").forEach(btn => {
@@ -1167,7 +1271,6 @@
     updateMenuPermissions();
     loadUsersList();
     
-    // إخفاء تبويب "المخفية" عن البائع
     if (getRole() === "seller") {
       const hiddenTab = document.querySelector('.tab[data-tab="hidden"]');
       if (hiddenTab) hiddenTab.style.display = "none";
