@@ -389,8 +389,9 @@
 
 <header>
   <div class="logo" onclick="toggleVIPBox()">
-    <i class="fa-solid fa-broom" style="margin-left: 6px;"></i> CH Clean Store
-  </div>
+  <img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo" style="height: 3.3rem; width: auto; margin-left: 8px; display: inline-block; vertical-align: middle;">
+  <span style="display: inline-block; vertical-align: middle;">CH Clean Store</span>
+</div>
   <div class="nav-icons">
     <i class="fa-solid fa-magnifying-glass" onclick="toggleSearch()"></i>
   </div>
@@ -690,7 +691,7 @@
   window.clearCart = () => { state.cart = []; localStorage.removeItem('cart_new'); renderUI(); closeModal('cartModal'); };
 
   // ============================================================
-  // زر تحديد الموقع (يحافظ على النص الأصلي)
+  // زر تحديد الموقع
   // ============================================================
   document.getElementById("locationBtn")?.addEventListener("click", () => {
     if (!navigator.geolocation) {
@@ -712,9 +713,7 @@
         const lng = position.coords.longitude;
         const mapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
         
-        // إضافة الرابط إلى النص الموجود بدلاً من استبداله
         if (existingAddress) {
-          // إذا كان الرابط موجوداً بالفعل، لا نضيفه مرة أخرى
           if (existingAddress.includes("maps.google.com")) {
             alert("📍 رابط الموقع موجود مسبقاً");
           } else {
@@ -755,30 +754,47 @@
     );
   });
 
+  // ============================================================
+  // دالة إنشاء رسالة الواتساب بالشكل المطلوب (LTR ثابت)
+  // ============================================================
   function generateWhatsAppMessage(name, phone, address, items, total) {
-  // بناء قائمة المنتجات بشكل مبسط
-  let itemsText = "";
-  items.forEach((item) => {
-    itemsText += `${item.quantity} ${item.name} x ${item.price.toLocaleString()} DA = ${(item.price * item.quantity).toLocaleString()} DA\n`;
-  });
-  
-  // معالجة العنوان أو رابط الموقع
-  let locationText = "";
-  if (address.includes("maps.google.com")) {
-    locationText = `الموقع: ${address}\n`;
-  } else if (address && address.trim() !== "") {
-    locationText = `العنوان: ${address}\n`;
+    // أحرف التحكم لفرض الاتجاه من اليسار إلى اليمين
+    const LTR_OVERRIDE = '\u202A';
+    const POP_DIRECTIONAL = '\u202C';
+    
+    // بناء قائمة المنتجات بالتنسيق الثابت LTR
+    let itemsText = "";
+    items.forEach((item) => {
+      const itemTotal = item.price * item.quantity;
+      //强制执行 LTR 顺序: الكمية × الاسم × السعر = المجموع
+      const forcedName = /[\u0600-\u06FF]/.test(item.name) ? `\u202D${item.name}\u202C` : item.name;
+itemsText += `${item.quantity} × ${item.name} × ${item.price.toLocaleString()} DA = ${itemTotal.toLocaleString()} DA\n`;
+    });
+    
+    // معالجة العنوان ورابط الموقع
+    let mapsText = "";
+    let addressText = "";
+    
+    if (address.includes("maps.google.com")) {
+      mapsText = `Google maps : ${address}\n`;
+      const addressPart = address.split('|')[0].trim();
+      if (addressPart && addressPart !== "") {
+        addressText = `l'adresse : ${addressPart}\n`;
+      }
+    } else if (address && address.trim() !== "") {
+      addressText = `l'adresse : ${address}\n`;
+    }
+    
+    // الرسالة النهائية مع LTR للسطر الأول أيضاً
+    return `${LTR_OVERRIDE}Nouvelle demande\n` +
+      `De ${name}\n` +
+      `N° de téléphone : ${phone}\n` +
+      addressText +
+      mapsText +
+      `\n${itemsText}\n` +
+      `Total : ${total.toLocaleString()} DA\n` +
+      `📅 ${new Date().toLocaleString('fr-FR')}${POP_DIRECTIONAL}`;
   }
-  
-  // الرسالة النهائية بشكل احترافي
-  return `🛍️ طلب جديد من ${STORE_NAME}\n\n` +
-    `العميل: ${name}\n` +
-    `الهاتف: ${phone}\n` +
-    locationText +
-    `\n${itemsText}\n` +
-    `الإجمالي: ${total.toLocaleString()} DA\n\n` +
-    `📅 ${new Date().toLocaleString('ar-DZ')}`;
-}
 
   async function saveOrderToFirebase(orderData) {
     try {
