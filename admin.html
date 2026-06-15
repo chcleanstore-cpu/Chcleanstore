@@ -630,15 +630,16 @@
     let invoiceNumber = order.invoiceNumber ? order.invoiceNumber.toString().padStart(4, '0') : '----';
     
     if (order.items && Array.isArray(order.items)) {
-      order.items.forEach((it, idx) => {
+      order.items.forEach((it) => {
         const qty = Number(it.quantity || 0);
         const price = Number(it.price || 0);
         const total = qty * price;
         totalQte += qty;
+        const serialNumber = rows.split('<tr>').length;
         
         rows += `
           <tr>
-            <td style="text-align:center; border:1px solid #000; padding:5px 3px;">${idx + 1}</td>
+            <td style="text-align:center; border:1px solid #000; padding:5px 3px;">${serialNumber + 1}</td>
             <td style="border:1px solid #000; padding:5px 8px; text-align:center;">${escapeHtml(it.serial || '---')}</td>
             <td style="border:1px solid #000; padding:5px 8px; text-align:right;">${escapeHtml(it.name || '')}</td>
             <td style="text-align:center; border:1px solid #000; padding:5px 3px;">${qty}</td>
@@ -768,6 +769,11 @@
             font-size: 10px;
             font-weight: 500;
           }
+          @page {
+            @bottom-center {
+              content: "Page : " counter(page) "/" counter(pages);
+            }
+          }
           @media print {
             body { padding: 0; }
             .invoice { border: 2px solid #000; }
@@ -797,7 +803,6 @@
           <div class="info-bar">
             <span>le ${new Date().toLocaleDateString('fr-FR')} - ${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</span>
             <span>Préparé par : ${escapeHtml(sellerName || 'KARIM')}</span>
-            <span>Page : 1/1</span>
           </div>
           
           <div style="text-align:center; margin:10px 0; font-weight:bold; font-size:14px;">Bon de livraison</div>
@@ -815,7 +820,7 @@
             <div class="invoice-number">N° de bon : ${invoiceNumber}</div>
             <div class="total-box">
               <div><strong>net à payer</strong></div>
-              <div class="total-amount">${totalPrice.toLocaleString('fr-FR')}.00 DA</div>
+              <div class="total-amount">${Math.floor(totalPrice)} DA</div>
             </div>
           </div>
           
@@ -840,15 +845,16 @@
     let invoiceNumber = order.invoiceNumber ? order.invoiceNumber.toString().padStart(4, '0') : '----';
     
     if (order.items && Array.isArray(order.items)) {
-      order.items.forEach((it, idx) => {
+      order.items.forEach((it) => {
         const qty = Number(it.quantity || 0);
         const price = Number(it.price || 0);
         const total = qty * price;
         totalQte += qty;
+        const serialNumber = rows.split('<tr>').length;
         
         rows += `
           <tr>
-            <td style="text-align:center; border:1px solid #000; padding:5px 3px;">${idx + 1}</td>
+            <td style="text-align:center; border:1px solid #000; padding:5px 3px;">${serialNumber + 1}</td>
             <td style="border:1px solid #000; padding:5px 8px; text-align:center;">${escapeHtml(it.serial || '---')}</td>
             <td style="border:1px solid #000; padding:5px 8px; text-align:left;">${escapeHtml(it.name || '')}</td>
             <td style="text-align:center; border:1px solid #000; padding:5px 3px;">${qty}</td>
@@ -978,6 +984,11 @@
             font-size: 10px;
             font-weight: 500;
           }
+          @page {
+            @bottom-center {
+              content: "Page : " counter(page) "/" counter(pages);
+            }
+          }
           @media print {
             body { padding: 0; }
             .invoice { border: 2px solid #000; }
@@ -1007,7 +1018,6 @@
           <div class="info-bar">
             <span>le ${new Date().toLocaleDateString('fr-FR')} - ${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</span>
             <span>Préparé par : ${escapeHtml(sellerName || 'KARIM')}</span>
-            <span>Page : 1/1</span>
           </div>
           
           <div style="text-align:center; margin:10px 0; font-weight:bold; font-size:14px;">Bon de livraison</div>
@@ -1025,7 +1035,7 @@
             <div class="invoice-number">N° de bon : ${invoiceNumber}</div>
             <div class="total-box">
               <div><strong>net à payer</strong></div>
-              <div class="total-amount">${totalPrice.toLocaleString('fr-FR')}.00 DA</div>
+              <div class="total-amount">${Math.floor(totalPrice)} DA</div>
             </div>
           </div>
           
