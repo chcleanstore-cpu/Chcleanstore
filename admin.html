@@ -592,7 +592,7 @@
 <div id="productsSection">
   <!-- ====== شريط فلترة العائلات ====== -->
   <div class="filter-section" id="familyFilterSection">
-    <button class="filter-btn active" data-family="all" id="filterAll">
+    <button class="filter-btn active" data-family="الكل" id="filterAll">
       <i class="fas fa-th-list"></i> الكل
       <span class="filter-count" id="countAll">0</span>
     </button>
@@ -746,7 +746,7 @@
   // ====== متغيرات العائلات والفلترة ======
   let familiesList = [];
   let editingProductId = null;
-  let currentFamilyFilter = 'all'; // 'all' أو اسم العائلة
+  let currentFamilyFilter = 'الكل';
 
   function showToast(msg) {
     const toast = document.getElementById("toastMessage");
@@ -1019,41 +1019,36 @@
     });
   }
 
-  function filterByFamily(family) {
+  // ====== دوال الفلترة ======
+  window.filterByFamily = function(family) {
     currentFamilyFilter = family;
-    
-    // تحديث حالة الأزرار
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.family === family);
-    });
-    
-    // إظهار زر إلغاء التصفية
-    const clearBtn = document.getElementById("clearFilterBtn");
-    if (clearBtn) {
-      clearBtn.classList.add('show');
-      clearBtn.textContent = `✕ ${escapeHtml(family)}`;
-    }
-    
-    // تطبيق الفلترة وعرض المنتجات
+    updateActiveFilters();
     applyFiltersAndRender();
-  }
+  };
 
-  function clearFamilyFilter() {
-    currentFamilyFilter = 'all';
-    
-    // تحديث حالة الأزرار
+  window.clearFamilyFilter = function() {
+    currentFamilyFilter = 'الكل';
+    updateActiveFilters();
+    applyFiltersAndRender();
+  };
+
+  function updateActiveFilters() {
+    // تحديث الأزرار النشطة
     document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.family === 'all');
+      const family = btn.dataset.family;
+      btn.classList.toggle('active', family === currentFamilyFilter);
     });
     
-    // إخفاء زر إلغاء التصفية
+    // تحديث زر إلغاء التصفية
     const clearBtn = document.getElementById("clearFilterBtn");
     if (clearBtn) {
-      clearBtn.classList.remove('show');
+      if (currentFamilyFilter === 'الكل') {
+        clearBtn.classList.remove('show');
+      } else {
+        clearBtn.classList.add('show');
+        clearBtn.textContent = `✕ ${escapeHtml(currentFamilyFilter)}`;
+      }
     }
-    
-    // تطبيق الفلترة وعرض المنتجات
-    applyFiltersAndRender();
   }
 
   // ====== دوال الفلترة والبحث ======
@@ -1063,8 +1058,8 @@
     // بدء بكل المنتجات
     let result = {...allProducts};
     
-    // فلترة حسب العائلة
-    if (currentFamilyFilter !== 'all') {
+    // فلترة حسب العائلة - فقط إذا لم تكن 'الكل'
+    if (currentFamilyFilter !== 'الكل' && currentFamilyFilter) {
       result = Object.fromEntries(
         Object.entries(result).filter(([_, p]) => p.family === currentFamilyFilter)
       );
@@ -1579,7 +1574,7 @@
       container.innerHTML = `
         <div class="no-data" style="grid-column: 1 / -1;">
           <i class="fas fa-box-open"></i>
-          لا توجد منتجات ${currentFamilyFilter !== 'all' ? `في عائلة "${currentFamilyFilter}"` : ''}
+          لا توجد منتجات ${currentFamilyFilter !== 'الكل' ? `في عائلة "${currentFamilyFilter}"` : ''}
         </div>
       `; 
       renderPagination(0); 
@@ -1992,6 +1987,11 @@
 
   // زر إلغاء التصفية
   document.getElementById("clearFilterBtn").addEventListener("click", clearFamilyFilter);
+  
+  // زر الكل
+  document.getElementById("filterAll").addEventListener("click", function() {
+    filterByFamily('الكل');
+  });
 
   document.getElementById("btnCover")?.addEventListener("click", () => document.getElementById("coverFileInput").click());
   const coverInput = document.createElement("input"); 
