@@ -110,10 +110,138 @@
       white-space: nowrap;
     }
     .tab.active { background: #262626; color: white; }
-    .search-box { padding: 12px 16px; }
+    
+    /* ====== ستايل فلترة العائلات ====== */
+    .filter-section {
+      padding: 8px 16px;
+      background: white;
+      border-bottom: 1px solid #efefef;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+    }
+    .filter-section::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 30px;
+      border: 2px solid #e5e7eb;
+      background: white;
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      color: #4b5563;
+      min-width: fit-content;
+    }
+    .filter-btn:hover {
+      border-color: #10b981;
+      color: #10b981;
+    }
+    .filter-btn.active {
+      background: #10b981;
+      color: white;
+      border-color: #10b981;
+    }
+    .filter-btn i {
+      margin-left: 4px;
+    }
+    .filter-clear {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      font-size: 12px;
+      display: none;
+    }
+    .filter-clear.show {
+      display: inline-block;
+    }
+    .filter-count {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-right: 4px;
+      background: #f3f4f6;
+      padding: 0 8px;
+      border-radius: 20px;
+    }
+
+    /* ====== ستايل أزرار إدارة العائلات ====== */
+    .family-item-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      position: relative;
+    }
+    .family-actions {
+      display: none;
+      align-items: center;
+      gap: 2px;
+      background: white;
+      border-radius: 30px;
+      padding: 2px 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: absolute;
+      left: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+    }
+    .family-item-wrapper:hover .family-actions {
+      display: inline-flex;
+    }
+    .family-item-wrapper .filter-btn.active + .family-actions {
+      display: inline-flex;
+    }
+    .family-action-btn {
+      background: none;
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: 0.2s;
+      color: #64748b;
+    }
+    .family-action-btn:hover {
+      transform: scale(1.1);
+    }
+    .family-action-btn.edit-btn:hover {
+      background: #eef2ff;
+      color: #10b981;
+    }
+    .family-action-btn.delete-btn:hover {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .family-action-btn i {
+      font-size: 11px;
+    }
+    .family-action-btn.edit-btn.active-edit {
+      background: #10b981;
+      color: white;
+    }
+    .family-action-btn.delete-btn.active-delete {
+      background: #dc2626;
+      color: white;
+    }
+
+    .search-box { 
+      padding: 8px 16px 12px 16px; 
+      background: white;
+    }
     .search-box input {
       width: 100%;
-      padding: 12px 20px;
+      padding: 10px 16px;
       border-radius: 30px;
       border: 1px solid #dbdbdb;
       background: #fafafa;
@@ -122,6 +250,7 @@
       outline: none;
     }
     .search-box input:focus { border-color: #10b981; }
+    
     .products-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -136,6 +265,11 @@
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       border: 1px solid #efefef;
+      transition: all 0.2s;
+    }
+    .product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     }
     .product-card img {
       width: 100%;
@@ -154,7 +288,15 @@
       overflow: hidden;
     }
     .product-price { color: #10b981; font-weight: 800; font-size: 16px; margin-bottom: 4px; }
-    .product-stock { font-size: 12px; color: #8e8e8e; margin-bottom: 10px; }
+    .product-family { 
+      font-size: 11px; 
+      color: #6b7280; 
+      margin-bottom: 8px;
+      background: #f3f4f6;
+      padding: 2px 10px;
+      border-radius: 20px;
+      display: inline-block;
+    }
     .product-actions { display: flex; gap: 8px; }
     .btn-icon {
       flex: 1;
@@ -229,6 +371,7 @@
       padding: 24px;
       max-height: 85vh;
       overflow-y: auto;
+      position: relative;
     }
     input, textarea, select {
       width: 100%;
@@ -264,6 +407,7 @@
     }
     .hidden-product { opacity: 0.6; filter: grayscale(0.2); }
     .no-data { text-align: center; padding: 40px; color: #8e8e8e; }
+    .no-data i { font-size: 40px; display: block; margin-bottom: 12px; color: #d1d5db; }
     html, body { width: 100%; overflow-x: hidden; }
     body { font-size: 14px; }
     @media (max-width: 640px) {
@@ -281,6 +425,9 @@
       .order-card { margin: 8px 12px; padding: 12px; }
       .modal-content { padding: 16px; width: 95%; }
       .fab { width: 48px; height: 48px; font-size: 22px; bottom: 15px; left: 15px; }
+      .filter-btn { font-size: 11px; padding: 4px 12px; }
+      .filter-section { padding: 6px 12px; gap: 4px; }
+      .family-actions { left: 0px; }
     }
     @media (min-width: 641px) and (max-width: 1024px) {
       .products-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -357,15 +504,70 @@
       cursor: pointer;
       font-weight: bold;
     }
+
+    /* ====== ستايل حقل العائلة الجديد ====== */
+    .family-field-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .family-field-wrapper select {
+      width: 100%;
+      padding: 12px 16px;
+      padding-left: 48px;
+      border: 1px solid #dbdbdb;
+      border-radius: 16px;
+      font-family: 'Cairo', sans-serif;
+      background: #fafafa;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .family-field-wrapper select:focus {
+      border-color: #10b981;
+    }
+    .family-add-btn {
+      position: absolute;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: 0.2s;
+      z-index: 2;
+    }
+    .family-add-btn:hover {
+      background: #059669;
+      transform: translateY(-50%) scale(1.05);
+    }
+    .family-add-btn i {
+      font-size: 12px;
+    }
+    .family-field-wrapper select:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
 
 <div class="top-bar">
   <div class="logo" onclick="toggleVIPBox()">
-  <img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo" style="height: 3.3rem; width: auto; margin-left: 8px; display: inline-block; vertical-align: middle;">
-  <span style="display: inline-block; vertical-align: middle;">CH Clean Store</span>
-</div>
+    <img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo" style="height: 3.3rem; width: auto; margin-left: 8px; display: inline-block; vertical-align: middle;">
+    <span style="display: inline-block; vertical-align: middle;">CH Clean Store</span>
+  </div>
   <div class="user-info">
     <span class="username" id="userNameDisplay"></span>
     <button class="menu-btn" id="menuToggleBtn"><i class="fas fa-ellipsis-h"></i></button>
@@ -388,6 +590,18 @@
 </div>
 
 <div id="productsSection">
+  <!-- ====== شريط فلترة العائلات ====== -->
+  <div class="filter-section" id="familyFilterSection">
+    <button class="filter-btn active" data-family="all" id="filterAll">
+      <i class="fas fa-th-list"></i> الكل
+      <span class="filter-count" id="countAll">0</span>
+    </button>
+    <!-- سيتم إضافة أزرار العائلات هنا بواسطة الجافا سكريبت -->
+    <button class="filter-clear" id="clearFilterBtn">
+      <i class="fas fa-times"></i> إلغاء التصفية
+    </button>
+  </div>
+
   <div class="search-box">
     <input type="text" id="searchInput" placeholder="🔍 بحث عن منتج...">
   </div>
@@ -439,7 +653,17 @@
       <input type="text" id="serial" placeholder="الرقم التسلسلي" required>
       <input type="text" id="name" placeholder="اسم المنتج" required>
       <input type="number" id="price" placeholder="سعر البيع (دج)" required>
-      <input type="number" id="pack" placeholder="الكمية" required>
+      
+      <div class="family-field-wrapper">
+        <select id="familySelect">
+          <option value="">-- اختر عائلة --</option>
+        </select>
+        <button type="button" class="family-add-btn" id="addFamilyBtn">
+          <i class="fas fa-plus"></i> إضافة
+        </button>
+      </div>
+      <input type="text" id="newFamilyInput" placeholder="اسم العائلة الجديدة" style="display:none; margin-bottom:8px;">
+      
       <div style="display:flex; gap:8px;">
         <input type="file" id="imageFile" accept="image/*" style="flex:1;">
         <label for="cameraInput" style="background:#efefef; padding:12px; border-radius:16px; cursor:pointer;">📷 كاميرا</label>
@@ -503,6 +727,7 @@
   const ordersRef = ref(db, "whatsappOrders");
   const confirmedRef = ref(db, "confirmedOrders");
   const invoiceCounterRef = ref(db, "settings/invoiceCounter");
+  const familiesRef = ref(db, "families");
 
   const IMGBB_KEY = "d9c4169515827e24b5c280cd7789cefb";
   const WHATSAPP_NUMBER = "213540667186";
@@ -517,6 +742,11 @@
   let currentOrderCount = 0;
   let newOrdersCount = 0;
   let isWhatsappTabOpen = false;
+
+  // ====== متغيرات العائلات والفلترة ======
+  let familiesList = [];
+  let editingProductId = null;
+  let currentFamilyFilter = 'all'; // 'all' أو اسم العائلة
 
   function showToast(msg) {
     const toast = document.getElementById("toastMessage");
@@ -580,6 +810,287 @@
     }
   }
 
+  // ====== دوال العائلات ======
+  function loadFamilies() {
+    onValue(familiesRef, (snap) => {
+      const data = snap.val();
+      if (data) {
+        familiesList = Object.entries(data).map(([key, value]) => {
+          const name = typeof value === 'string' ? value : value.name || value;
+          return { key, name };
+        });
+      } else {
+        familiesList = [];
+      }
+      populateFamilySelect();
+      renderFamilyFilters();
+    });
+  }
+
+  function populateFamilySelect() {
+    const select = document.getElementById("familySelect");
+    if (!select) return;
+    const currentValue = select.value;
+    select.innerHTML = '<option value="">-- اختر عائلة --</option>';
+    familiesList.forEach(({ name }) => {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    });
+    if (currentValue && familiesList.some(f => f.name === currentValue)) {
+      select.value = currentValue;
+    }
+  }
+
+  async function addNewFamily(familyName) {
+    if (!familyName.trim()) return false;
+    const trimmedName = familyName.trim();
+    if (familiesList.some(f => f.name === trimmedName)) {
+      showToast("⚠️ هذه العائلة موجودة بالفعل");
+      return false;
+    }
+    try {
+      const newRef = push(familiesRef);
+      await set(newRef, trimmedName);
+      showToast(`✅ تم إضافة عائلة "${trimmedName}"`);
+      return true;
+    } catch (error) {
+      console.error("خطأ في الحفظ:", error);
+      showToast("❌ حدث خطأ أثناء الحفظ");
+      return false;
+    }
+  }
+
+  function setFamilyInForm(familyName) {
+    const select = document.getElementById("familySelect");
+    if (familyName && familiesList.some(f => f.name === familyName)) {
+      select.value = familyName;
+    } else {
+      select.value = "";
+    }
+  }
+
+  // ====== دوال فلترة العائلات ======
+  function renderFamilyFilters() {
+    const section = document.getElementById("familyFilterSection");
+    if (!section) return;
+    
+    // حذف أزرار العائلات القديمة (باستثناء زر "الكل" وزر "إلغاء التصفية")
+    const existingWrappers = section.querySelectorAll('.family-item-wrapper');
+    existingWrappers.forEach(el => el.remove());
+    
+    const canManage = (isOwner() || isAdmin());
+    
+    // إضافة أزرار لكل عائلة
+    familiesList.forEach(({ key, name }) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "family-item-wrapper";
+      
+      const btn = document.createElement("button");
+      btn.className = "filter-btn";
+      if (currentFamilyFilter === name) btn.classList.add("active");
+      btn.dataset.family = name;
+      btn.innerHTML = `
+        <i class="fas fa-tag"></i> ${escapeHtml(name)}
+        <span class="filter-count" id="count_${escapeHtml(name)}">0</span>
+      `;
+      btn.addEventListener("click", () => {
+        filterByFamily(name);
+      });
+      
+      wrapper.appendChild(btn);
+      
+      // أزرار الإدارة (تعديل وحذف) - فقط للمالك والمدير
+      if (canManage) {
+        const actions = document.createElement("div");
+        actions.className = "family-actions";
+        
+        // زر التعديل
+        const editBtn = document.createElement("button");
+        editBtn.className = "family-action-btn edit-btn";
+        editBtn.innerHTML = `<i class="fas fa-pen"></i>`;
+        editBtn.title = `تعديل عائلة "${name}"`;
+        editBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          editFamilyName(key, name);
+        });
+        actions.appendChild(editBtn);
+        
+        // زر الحذف
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "family-action-btn delete-btn";
+        deleteBtn.innerHTML = `<i class="fas fa-trash"></i>`;
+        deleteBtn.title = `حذف عائلة "${name}"`;
+        deleteBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          deleteFamily(key, name);
+        });
+        actions.appendChild(deleteBtn);
+        
+        wrapper.appendChild(actions);
+      }
+      
+      section.insertBefore(wrapper, document.getElementById("clearFilterBtn"));
+    });
+    
+    // تحديث أعداد المنتجات لكل عائلة
+    updateFamilyCounts();
+  }
+
+  // ====== دالة تعديل اسم العائلة ======
+  async function editFamilyName(key, oldName) {
+    const newName = prompt(`تعديل اسم العائلة "${oldName}"`, oldName);
+    if (!newName || newName.trim() === oldName) return;
+    
+    const trimmedName = newName.trim();
+    
+    // التحقق من عدم وجود عائلة بنفس الاسم
+    if (familiesList.some(f => f.name === trimmedName && f.key !== key)) {
+      showToast("⚠️ هذه العائلة موجودة بالفعل");
+      return;
+    }
+    
+    try {
+      // تحديث اسم العائلة في Firebase
+      await set(ref(db, `families/${key}`), trimmedName);
+      
+      // تحديث جميع المنتجات التي تنتمي لهذه العائلة
+      const updates = {};
+      Object.entries(allProducts).forEach(([productId, product]) => {
+        if (product.family === oldName) {
+          updates[`products/${productId}/family`] = trimmedName;
+        }
+      });
+      
+      if (Object.keys(updates).length > 0) {
+        await update(ref(db), updates);
+      }
+      
+      showToast(`✅ تم تغيير اسم العائلة إلى "${trimmedName}"`);
+      
+    } catch (error) {
+      console.error("خطأ في التعديل:", error);
+      showToast("❌ حدث خطأ أثناء التعديل");
+    }
+  }
+
+  // ====== دالة حذف العائلة ======
+  async function deleteFamily(key, familyName) {
+    if (!confirm(`⚠️ هل أنت متأكد من حذف عائلة "${familyName}" نهائياً؟\n\nملاحظة: المنتجات التي تنتمي لهذه العائلة ستصبح "غير مصنف"`)) {
+      return;
+    }
+    
+    try {
+      // 1. تحديث جميع المنتجات التي تنتمي لهذه العائلة إلى "غير مصنف"
+      const updates = {};
+      Object.entries(allProducts).forEach(([productId, product]) => {
+        if (product.family === familyName) {
+          updates[`products/${productId}/family`] = "";
+        }
+      });
+      
+      if (Object.keys(updates).length > 0) {
+        await update(ref(db), updates);
+      }
+      
+      // 2. حذف العائلة من Firebase
+      await remove(ref(db, `families/${key}`));
+      
+      showToast(`✅ تم حذف عائلة "${familyName}"`);
+      
+    } catch (error) {
+      console.error("خطأ في الحذف:", error);
+      showToast("❌ حدث خطأ أثناء الحذف");
+    }
+  }
+
+  function updateFamilyCounts() {
+    // تحديث عدد الكل
+    const totalProducts = Object.values(allProducts).filter(p => !p.hidden).length;
+    const countAll = document.getElementById("countAll");
+    if (countAll) countAll.textContent = totalProducts;
+    
+    // تحديث عدد كل عائلة
+    familiesList.forEach(({ name }) => {
+      const count = Object.values(allProducts).filter(p => !p.hidden && p.family === name).length;
+      const countEl = document.getElementById(`count_${escapeHtml(name)}`);
+      if (countEl) countEl.textContent = count;
+    });
+  }
+
+  function filterByFamily(family) {
+    currentFamilyFilter = family;
+    
+    // تحديث حالة الأزرار
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.family === family);
+    });
+    
+    // إظهار زر إلغاء التصفية
+    const clearBtn = document.getElementById("clearFilterBtn");
+    if (clearBtn) {
+      clearBtn.classList.add('show');
+      clearBtn.textContent = `✕ ${escapeHtml(family)}`;
+    }
+    
+    // تطبيق الفلترة وعرض المنتجات
+    applyFiltersAndRender();
+  }
+
+  function clearFamilyFilter() {
+    currentFamilyFilter = 'all';
+    
+    // تحديث حالة الأزرار
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.family === 'all');
+    });
+    
+    // إخفاء زر إلغاء التصفية
+    const clearBtn = document.getElementById("clearFilterBtn");
+    if (clearBtn) {
+      clearBtn.classList.remove('show');
+    }
+    
+    // تطبيق الفلترة وعرض المنتجات
+    applyFiltersAndRender();
+  }
+
+  // ====== دوال الفلترة والبحث ======
+  function applyFiltersAndRender() {
+    const searchTerm = document.getElementById("searchInput").value.trim().toLowerCase();
+    
+    // بدء بكل المنتجات
+    let result = {...allProducts};
+    
+    // فلترة حسب العائلة
+    if (currentFamilyFilter !== 'all') {
+      result = Object.fromEntries(
+        Object.entries(result).filter(([_, p]) => p.family === currentFamilyFilter)
+      );
+    }
+    
+    // فلترة حسب البحث
+    if (searchTerm) {
+      result = Object.fromEntries(
+        Object.entries(result).filter(([_, p]) => 
+          (p.name || "").toLowerCase().includes(searchTerm) || 
+          (p.serial || "").toLowerCase().includes(searchTerm)
+        )
+      );
+    }
+    
+    filtered = result;
+    currentPage = 1;
+    renderProducts(1);
+    updateFamilyCounts();
+  }
+
+  function applySearch() {
+    applyFiltersAndRender();
+  }
+
+  // ====== دوال المنتجات ======
   async function getNextInvoiceNumber() {
     const snapshot = await get(invoiceCounterRef);
     let currentNumber = snapshot.exists() ? snapshot.val() : 0;
@@ -623,13 +1134,10 @@
     showToast("✅ تم تأكيد الطلب وطباعته ونقله إلى الطلبات المؤكدة");
   }
 
-  // ============================================================
-  // دالة طباعة الفاتورة - تم تعديلها لحل مشكلة الترقيم والارتفاع
-  // ============================================================
   function printInvoice(order, sellerName) {
     let rows = "";
     let totalQte = 0;
-    let itemIndex = 1; // <--- بداية الترقيم من 1
+    let itemIndex = 1;
 
     let invoiceNumber = order.invoiceNumber ? order.invoiceNumber.toString().padStart(4, '0') : '----';
 
@@ -640,7 +1148,6 @@
         const total = qty * price;
         totalQte += qty;
 
-        // استخدم itemIndex للحصول على الرقم التسلسلي الصحيح
         rows += `
           <tr>
             <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${itemIndex}</td>
@@ -651,7 +1158,7 @@
             <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
           </tr>
         `;
-        itemIndex++; // <--- زيادة العداد
+        itemIndex++;
       });
     }
 
@@ -732,8 +1239,8 @@
           }
           th, td {
             border: 1px solid #000;
-            padding: 2px 4px; /* <--- تم تصغير padding لتقليل الارتفاع */
-            font-size: 10px;  /* <--- تم تصغير حجم الخط قليلاً */
+            padding: 2px 4px;
+            font-size: 10px;
           }
           th {
             background: #f4f4f4;
@@ -843,13 +1350,10 @@
     setTimeout(() => { win.focus(); }, 500);
   }
 
-  // ============================================================
-  // دالة طباعة الفاتورة المؤكدة - تم تعديلها بنفس الطريقة
-  // ============================================================
   function printConfirmedOrder(order, sellerName) {
     let rows = "";
     let totalQte = 0;
-    let itemIndex = 1; // <--- بداية الترقيم من 1
+    let itemIndex = 1;
 
     let invoiceNumber = order.invoiceNumber ? order.invoiceNumber.toString().padStart(4, '0') : '----';
 
@@ -1071,7 +1575,16 @@
     if (page > total) page = 1;
     const start = (page-1)*PER_PAGE;
     const items = arr.slice(start, start+PER_PAGE);
-    if(!items.length) { container.innerHTML = "<div class='no-data'>لا توجد منتجات</div>"; renderPagination(0); return; }
+    if(!items.length) { 
+      container.innerHTML = `
+        <div class="no-data" style="grid-column: 1 / -1;">
+          <i class="fas fa-box-open"></i>
+          لا توجد منتجات ${currentFamilyFilter !== 'all' ? `في عائلة "${currentFamilyFilter}"` : ''}
+        </div>
+      `; 
+      renderPagination(0); 
+      return; 
+    }
     
     const canEdit = (isOwner() || isAdmin());
     
@@ -1084,7 +1597,7 @@
         <div class="product-info">
           <div class="product-name">${escapeHtml(prod.name)}</div>
           <div class="product-price">${Number(prod.price).toLocaleString()} دج</div>
-          <div class="product-stock">📦 المخزون: ${prod.pack || 0}</div>
+          <div class="product-family">🏷️ ${prod.family || 'غير مصنف'}</div>
           <div class="product-actions">
             ${canEdit ? `<button class="btn-icon btn-edit" data-id="${id}"><i class="fas fa-edit"></i> تعديل</button>` : ''}
             ${canEdit ? `<button class="btn-icon btn-delete" data-id="${id}"><i class="fas fa-trash"></i> حذف</button>` : ''}
@@ -1171,6 +1684,7 @@
         <div class="product-info">
           <div class="product-name">${escapeHtml(prod.name)}</div>
           <div class="product-price">${prod.price} دج</div>
+          <div class="product-family">🏷️ ${prod.family || 'غير مصنف'}</div>
           <div class="product-actions">
             <button class="btn-icon btn-edit" data-id="${id}"><i class="fas fa-edit"></i> تعديل</button>
           </div>
@@ -1335,22 +1849,17 @@
     });
   }
 
-  function applySearch() {
-    const term = document.getElementById("searchInput").value.trim().toLowerCase();
-    if(!term) filtered = {...allProducts};
-    else filtered = Object.fromEntries(Object.entries(allProducts).filter(([_,p]) => (p.name||"").toLowerCase().includes(term) || (p.serial||"").toLowerCase().includes(term)));
-    currentPage = 1;
-    renderProducts(1);
-  }
-
   window.editProduct = (id) => {
     const p = allProducts[id];
     if(!p) return;
+    editingProductId = id;
     document.getElementById("editId").value = id;
     document.getElementById("serial").value = p.serial || "";
     document.getElementById("name").value = p.name || "";
     document.getElementById("price").value = p.price || "";
-    document.getElementById("pack").value = p.pack || "";
+    
+    setFamilyInForm(p.family || "");
+    
     document.getElementById("formTitle").innerText = "✏️ تعديل المنتج";
     const toggleBtn = document.getElementById("toggleVisibilityBtn");
     toggleBtn.style.display = "inline-block";
@@ -1382,7 +1891,10 @@
     const serial = document.getElementById("serial").value.trim();
     const name = document.getElementById("name").value.trim();
     const price = parseFloat(document.getElementById("price").value)||0;
-    const pack = parseInt(document.getElementById("pack").value)||0;
+    
+    const familySelect = document.getElementById("familySelect");
+    const selectedFamily = familySelect.value;
+    
     const fileInput = document.getElementById("imageFile");
     const cameraInput = document.getElementById("cameraInput");
     let selectedFile = fileInput.files[0] || cameraInput.files[0];
@@ -1397,12 +1909,22 @@
         const upload = await uploadImage(selectedFile);
         newImg = upload.url; newDel = upload.deleteUrl;
       }
-      const data = { serial, name, price, pack, imageUrl: newImg, deleteUrl: newDel, hidden: existing?.hidden || false };
+      const data = { 
+        serial, 
+        name, 
+        price, 
+        family: selectedFamily || "",
+        imageUrl: newImg, 
+        deleteUrl: newDel, 
+        hidden: existing?.hidden || false 
+      };
       if(id) await update(ref(db, "products/"+id), data);
       else await push(productsRef, data);
       showToast("✅ تم الحفظ");
       document.getElementById("productForm").reset();
       document.getElementById("editId").value = "";
+      editingProductId = null;
+      document.getElementById("familySelect").value = "";
     } catch(err) { alert("خطأ: "+err.message); }
   };
 
@@ -1413,6 +1935,63 @@
     showToast(curr.hidden ? "تم الإظهار" : "تم الإخفاء");
     closeModal("productModal");
   }
+
+  document.getElementById("addFamilyBtn").addEventListener("click", async function() {
+    const select = document.getElementById("familySelect");
+    const newFamilyInput = document.getElementById("newFamilyInput");
+    
+    if (newFamilyInput.style.display === "none") {
+      newFamilyInput.style.display = "block";
+      newFamilyInput.focus();
+      this.innerHTML = '<i class="fas fa-check"></i> حفظ';
+      this.style.background = "#059669";
+      return;
+    }
+    
+    const familyName = newFamilyInput.value.trim();
+    if (!familyName) {
+      showToast("⚠️ الرجاء إدخال اسم العائلة");
+      return;
+    }
+    
+    const success = await addNewFamily(familyName);
+    if (success) {
+      newFamilyInput.value = "";
+      newFamilyInput.style.display = "none";
+      this.innerHTML = '<i class="fas fa-plus"></i> إضافة';
+      this.style.background = "#10b981";
+      const select = document.getElementById("familySelect");
+      if (familiesList.some(f => f.name === familyName)) {
+        select.value = familyName;
+      }
+    }
+  });
+
+  document.getElementById("newFamilyInput").addEventListener("blur", function() {
+    if (this.value.trim() === "") {
+      this.style.display = "none";
+      const btn = document.getElementById("addFamilyBtn");
+      btn.innerHTML = '<i class="fas fa-plus"></i> إضافة';
+      btn.style.background = "#10b981";
+    }
+  });
+
+  document.getElementById("newFamilyInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      document.getElementById("addFamilyBtn").click();
+    }
+    if (e.key === "Escape") {
+      this.value = "";
+      this.style.display = "none";
+      const btn = document.getElementById("addFamilyBtn");
+      btn.innerHTML = '<i class="fas fa-plus"></i> إضافة';
+      btn.style.background = "#10b981";
+    }
+  });
+
+  // زر إلغاء التصفية
+  document.getElementById("clearFilterBtn").addEventListener("click", clearFamilyFilter);
 
   document.getElementById("btnCover")?.addEventListener("click", () => document.getElementById("coverFileInput").click());
   const coverInput = document.createElement("input"); 
@@ -1523,6 +2102,14 @@
 
   function closeModal(id) { 
     document.getElementById(id).style.display = "none"; 
+    if (id === "productModal") {
+      const newFamilyInput = document.getElementById("newFamilyInput");
+      newFamilyInput.style.display = "none";
+      newFamilyInput.value = "";
+      const btn = document.getElementById("addFamilyBtn");
+      btn.innerHTML = '<i class="fas fa-plus"></i> إضافة';
+      btn.style.background = "#10b981";
+    }
   }
   function openModal(id) { 
     document.getElementById(id).style.display = "flex"; 
@@ -1551,6 +2138,7 @@
     document.getElementById("tabsContainer").style.display = "flex";
     updateMenuPermissions();
     loadUsersList();
+    loadFamilies();
     
     if (getRole() === "seller") {
       const hiddenTab = document.querySelector('.tab[data-tab="hidden"]');
@@ -1597,6 +2185,13 @@
       document.getElementById("editId").value=""; 
       document.getElementById("formTitle").innerText="إضافة منتج"; 
       document.getElementById("toggleVisibilityBtn").style.display="none"; 
+      document.getElementById("familySelect").value = "";
+      document.getElementById("newFamilyInput").style.display = "none";
+      document.getElementById("newFamilyInput").value = "";
+      const btn = document.getElementById("addFamilyBtn");
+      btn.innerHTML = '<i class="fas fa-plus"></i> إضافة';
+      btn.style.background = "#10b981";
+      editingProductId = null;
       openModal("productModal"); 
     };
     
@@ -1616,8 +2211,7 @@
 
   onValue(productsRef, (snap) => { 
     allProducts = snap.val()||{}; 
-    filtered = {...allProducts}; 
-    renderProducts(currentPage); 
+    applyFiltersAndRender(); 
     renderHidden(); 
   });
 
