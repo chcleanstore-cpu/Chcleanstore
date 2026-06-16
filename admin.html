@@ -623,38 +623,43 @@
     showToast("✅ تم تأكيد الطلب وطباعته ونقله إلى الطلبات المؤكدة");
   }
 
+  // ============================================================
+  // دالة طباعة الفاتورة - تم تعديلها لحل مشكلة الترقيم والارتفاع
+  // ============================================================
   function printInvoice(order, sellerName) {
     let rows = "";
     let totalQte = 0;
-    
+    let itemIndex = 1; // <--- بداية الترقيم من 1
+
     let invoiceNumber = order.invoiceNumber ? order.invoiceNumber.toString().padStart(4, '0') : '----';
-    
+
     if (order.items && Array.isArray(order.items)) {
       order.items.forEach((it) => {
         const qty = Number(it.quantity || 0);
         const price = Number(it.price || 0);
         const total = qty * price;
         totalQte += qty;
-        const serialNumber = rows.split('<tr>').length;
-        
+
+        // استخدم itemIndex للحصول على الرقم التسلسلي الصحيح
         rows += `
           <tr>
-            <td style="text-align:center; border:1px solid #000; padding:5px 3px;">${serialNumber + 1}</td>
-            <td style="border:1px solid #000; padding:5px 8px; text-align:center;">${escapeHtml(it.serial || '---')}</td>
-            <td style="border:1px solid #000; padding:5px 8px; text-align:right;">${escapeHtml(it.name || '')}</td>
-            <td style="text-align:center; border:1px solid #000; padding:5px 3px;">${qty}</td>
-            <td style="text-align:right; border:1px solid #000; padding:5px 8px;">${price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
-            <td style="text-align:right; border:1px solid #000; padding:5px 8px;">${total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
+            <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${itemIndex}</td>
+            <td style="border:1px solid #000; padding:2px 4px; text-align:center;">${escapeHtml(it.serial || '---')}</td>
+            <td style="border:1px solid #000; padding:2px 4px; text-align:right;">${escapeHtml(it.name || '')}</td>
+            <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${qty}</td>
+            <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
+            <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
           </tr>
         `;
+        itemIndex++; // <--- زيادة العداد
       });
     }
-    
+
     const totalPrice = order.totalPrice || 0;
     const nbreProduit = order.items ? order.items.length : 0;
-    
+
     const win = window.open('', '_blank');
-    
+
     win.document.write(`
       <!DOCTYPE html>
       <html lang="fr" dir="ltr">
@@ -727,8 +732,8 @@
           }
           th, td {
             border: 1px solid #000;
-            padding: 6px 5px;
-            font-size: 11px;
+            padding: 2px 4px; /* <--- تم تصغير padding لتقليل الارتفاع */
+            font-size: 10px;  /* <--- تم تصغير حجم الخط قليلاً */
           }
           th {
             background: #f4f4f4;
@@ -833,43 +838,47 @@
       </body>
       </html>
     `);
-    
+
     win.document.close();
     setTimeout(() => { win.focus(); }, 500);
   }
 
+  // ============================================================
+  // دالة طباعة الفاتورة المؤكدة - تم تعديلها بنفس الطريقة
+  // ============================================================
   function printConfirmedOrder(order, sellerName) {
     let rows = "";
     let totalQte = 0;
-    
+    let itemIndex = 1; // <--- بداية الترقيم من 1
+
     let invoiceNumber = order.invoiceNumber ? order.invoiceNumber.toString().padStart(4, '0') : '----';
-    
+
     if (order.items && Array.isArray(order.items)) {
       order.items.forEach((it) => {
         const qty = Number(it.quantity || 0);
         const price = Number(it.price || 0);
         const total = qty * price;
         totalQte += qty;
-        const serialNumber = rows.split('<tr>').length;
-        
+
         rows += `
           <tr>
-            <td style="text-align:center; border:1px solid #000; padding:5px 3px;">${serialNumber + 1}</td>
-            <td style="border:1px solid #000; padding:5px 8px; text-align:center;">${escapeHtml(it.serial || '---')}</td>
-            <td style="border:1px solid #000; padding:5px 8px; text-align:left;">${escapeHtml(it.name || '')}</td>
-            <td style="text-align:center; border:1px solid #000; padding:5px 3px;">${qty}</td>
-            <td style="text-align:right; border:1px solid #000; padding:5px 8px;">${price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
-            <td style="text-align:right; border:1px solid #000; padding:5px 8px;">${total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
+            <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${itemIndex}</td>
+            <td style="border:1px solid #000; padding:2px 4px; text-align:center;">${escapeHtml(it.serial || '---')}</td>
+            <td style="border:1px solid #000; padding:2px 4px; text-align:left;">${escapeHtml(it.name || '')}</td>
+            <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${qty}</td>
+            <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
+            <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
           </tr>
         `;
+        itemIndex++;
       });
     }
-    
+
     const totalPrice = order.totalPrice || 0;
     const nbreProduit = order.items ? order.items.length : 0;
-    
+
     const win = window.open('', '_blank');
-    
+
     win.document.write(`
       <!DOCTYPE html>
       <html lang="fr" dir="ltr">
@@ -942,8 +951,8 @@
           }
           th, td {
             border: 1px solid #000;
-            padding: 6px 5px;
-            font-size: 11px;
+            padding: 2px 4px;
+            font-size: 10px;
           }
           th {
             background: #f4f4f4;
@@ -1048,7 +1057,7 @@
       </body>
       </html>
     `);
-    
+
     win.document.close();
     setTimeout(() => { win.focus(); }, 500);
   }
