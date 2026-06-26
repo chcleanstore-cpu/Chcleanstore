@@ -7,134 +7,558 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* ====== كل الستايل القديم يبقى كما هو ====== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Cairo', sans-serif; background: #fafafa; color: #262626; padding-bottom: 80px; }
-    .top-bar { background: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dbdbdb; position: sticky; top: 0; z-index: 100; }
-    .logo { font-size: 22px; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .user-info { display: flex; align-items: center; gap: 12px; }
-    .username { font-weight: 600; background: #efefef; padding: 6px 14px; border-radius: 30px; font-size: 14px; }
-    .menu-btn { background: none; border: none; font-size: 24px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #fafafa;
+      color: #262626;
+      padding-bottom: 80px;
+    }
+    .top-bar {
+      background: white;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #dbdbdb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10b981, #059669);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .username {
+      font-weight: 600;
+      background: #efefef;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 14px;
+    }
+    .menu-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     .menu-btn:hover { background: #efefef; }
-    .dropdown-menu { position: absolute; top: 60px; left: 16px; background: white; border-radius: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); width: 240px; z-index: 200; display: none; overflow: hidden; border: 1px solid #efefef; }
-    .dropdown-menu button { width: 100%; padding: 14px 16px; text-align: right; background: none; border: none; font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+    .dropdown-menu {
+      position: absolute;
+      top: 60px;
+      left: 16px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      width: 240px;
+      z-index: 200;
+      display: none;
+      overflow: hidden;
+      border: 1px solid #efefef;
+    }
+    .dropdown-menu button {
+      width: 100%;
+      padding: 14px 16px;
+      text-align: right;
+      background: none;
+      border: none;
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+    }
     .dropdown-menu button i { width: 24px; color: #262626; }
     .dropdown-menu button:hover { background: #f8f8f8; }
-    .tabs { display: flex; gap: 8px; padding: 12px 16px; background: white; border-bottom: 1px solid #dbdbdb; overflow-x: auto; }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      background: white;
+      border-bottom: 1px solid #dbdbdb;
+      overflow-x: auto;
+    }
     .tabs::-webkit-scrollbar { display: none; }
-    .tab { background: none; border: none; padding: 8px 20px; font-family: 'Cairo', sans-serif; font-weight: 600; font-size: 15px; border-radius: 30px; cursor: pointer; color: #8e8e8e; white-space: nowrap; }
+    .tab {
+      background: none;
+      border: none;
+      padding: 8px 20px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      border-radius: 30px;
+      cursor: pointer;
+      color: #8e8e8e;
+      white-space: nowrap;
+    }
     .tab.active { background: #262626; color: white; }
-    .filter-section { padding: 8px 16px; background: white; border-bottom: 1px solid #efefef; display: flex; align-items: center; gap: 8px; overflow-x: auto; flex-wrap: nowrap; }
+    
+    /* ====== ستايل فلترة العائلات ====== */
+    .filter-section {
+      padding: 8px 16px;
+      background: white;
+      border-bottom: 1px solid #efefef;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+    }
     .filter-section::-webkit-scrollbar { display: none; }
-    .filter-btn { padding: 6px 16px; border-radius: 30px; border: 2px solid #e5e7eb; background: white; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; color: #4b5563; min-width: fit-content; }
-    .filter-btn:hover { border-color: #10b981; color: #10b981; }
-    .filter-btn.active { background: #10b981; color: white; border-color: #10b981; }
-    .filter-btn i { margin-left: 4px; }
-    .filter-clear { background: none; border: none; color: #ef4444; font-weight: 600; cursor: pointer; padding: 4px 8px; font-size: 12px; display: none; }
-    .filter-clear.show { display: inline-block; }
-    .filter-count { font-size: 11px; color: #9ca3af; margin-right: 4px; background: #f3f4f6; padding: 0 8px; border-radius: 20px; }
-    .family-item-wrapper { display: inline-flex; align-items: center; gap: 2px; position: relative; }
-    .family-actions { display: none; align-items: center; gap: 2px; background: white; border-radius: 30px; padding: 2px 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); position: absolute; left: -5px; top: 50%; transform: translateY(-50%); z-index: 10; }
-    .family-item-wrapper:hover .family-actions { display: inline-flex; }
-    .family-item-wrapper .filter-btn.active + .family-actions { display: inline-flex; }
-    .family-action-btn { background: none; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: 0.2s; color: #64748b; }
-    .family-action-btn:hover { transform: scale(1.1); }
-    .family-action-btn.edit-btn:hover { background: #eef2ff; color: #10b981; }
-    .family-action-btn.delete-btn:hover { background: #fee2e2; color: #dc2626; }
-    .family-action-btn i { font-size: 11px; }
-    .search-box { padding: 8px 16px 12px 16px; background: white; }
-    .search-box input { width: 100%; padding: 10px 16px; border-radius: 30px; border: 1px solid #dbdbdb; background: #fafafa; font-family: 'Cairo', sans-serif; font-size: 14px; outline: none; }
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 30px;
+      border: 2px solid #e5e7eb;
+      background: white;
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      color: #4b5563;
+      min-width: fit-content;
+    }
+    .filter-btn:hover {
+      border-color: #10b981;
+      color: #10b981;
+    }
+    .filter-btn.active {
+      background: #10b981;
+      color: white;
+      border-color: #10b981;
+    }
+    .filter-btn i {
+      margin-left: 4px;
+    }
+    .filter-clear {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      font-size: 12px;
+      display: none;
+    }
+    .filter-clear.show {
+      display: inline-block;
+    }
+    .filter-count {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-right: 4px;
+      background: #f3f4f6;
+      padding: 0 8px;
+      border-radius: 20px;
+    }
+
+    /* ====== ستايل أزرار إدارة العائلات ====== */
+    .family-item-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      position: relative;
+    }
+    .family-actions {
+      display: none;
+      align-items: center;
+      gap: 2px;
+      background: white;
+      border-radius: 30px;
+      padding: 2px 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: absolute;
+      left: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+    }
+    .family-item-wrapper:hover .family-actions {
+      display: inline-flex;
+    }
+    .family-item-wrapper .filter-btn.active + .family-actions {
+      display: inline-flex;
+    }
+    .family-action-btn {
+      background: none;
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: 0.2s;
+      color: #64748b;
+    }
+    .family-action-btn:hover {
+      transform: scale(1.1);
+    }
+    .family-action-btn.edit-btn:hover {
+      background: #eef2ff;
+      color: #10b981;
+    }
+    .family-action-btn.delete-btn:hover {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .family-action-btn i {
+      font-size: 11px;
+    }
+    .family-action-btn.edit-btn.active-edit {
+      background: #10b981;
+      color: white;
+    }
+    .family-action-btn.delete-btn.active-delete {
+      background: #dc2626;
+      color: white;
+    }
+
+    .search-box { 
+      padding: 8px 16px 12px 16px; 
+      background: white;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 30px;
+      border: 1px solid #dbdbdb;
+      background: #fafafa;
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      outline: none;
+    }
     .search-box input:focus { border-color: #10b981; }
-    .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
+    
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 12px;
+    }
     @media (min-width: 640px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (min-width: 1024px) { .products-grid { grid-template-columns: repeat(4, 1fr); } }
-    .product-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #efefef; transition: all 0.2s; position: relative; }
-    .product-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-    .product-card img { width: 100%; height: 180px; object-fit: cover; background: #f0f0f0; }
+    .product-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #efefef;
+      transition: all 0.2s;
+    }
+    .product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: #f0f0f0;
+    }
     .product-info { padding: 12px; }
-    .product-name { font-weight: 700; font-size: 14px; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .product-name {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
     .product-price { color: #10b981; font-weight: 800; font-size: 16px; margin-bottom: 4px; }
-    .product-family { font-size: 11px; color: #6b7280; margin-bottom: 8px; background: #f3f4f6; padding: 2px 10px; border-radius: 20px; display: inline-block; }
-    .product-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn-icon { flex: 1; padding: 8px; border-radius: 30px; border: none; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .product-family { 
+      font-size: 11px; 
+      color: #6b7280; 
+      margin-bottom: 8px;
+      background: #f3f4f6;
+      padding: 2px 10px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+    .product-actions { display: flex; gap: 8px; }
+    .btn-icon {
+      flex: 1;
+      padding: 8px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
     .btn-edit { background: #eef2ff; color: #10b981; }
     .btn-delete { background: #ffeaea; color: #e74c3c; }
-    .btn-discount { background: #fef3c7; color: #d97706; }
-    .btn-discount.active-discount { background: #dc2626; color: white; }
-    .product-card.on-sale { border: 3px solid #dc2626; background: #fff5f5; box-shadow: 0 0 20px rgba(220, 38, 38, 0.15); }
-    .product-card.on-sale .product-price { color: #dc2626; font-size: 1.2rem; }
-    .product-card.on-sale .old-price { text-decoration: line-through; color: #999; font-size: 0.8rem; margin-left: 6px; }
-    .sale-badge { position: absolute; top: 8px; left: 8px; background: #dc2626; color: #ffdd00; padding: 4px 12px; border-radius: 30px; font-weight: 700; font-size: 11px; box-shadow: 0 2px 8px rgba(220,38,38,0.3); z-index: 5; display: flex; align-items: center; gap: 4px; }
-    .sale-badge i { font-size: 10px; }
-    .discount-timer { font-size: 11px; color: #dc2626; font-weight: 600; margin-top: 4px; background: #fee2e2; padding: 2px 10px; border-radius: 20px; display: inline-block; }
-    .discount-timer.unlimited { background: #dbeafe; color: #2563eb; }
-    .order-card { background: white; margin: 12px 16px; padding: 16px; border-radius: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-right: 4px solid #10b981; }
-    .confirmed-card { border-right-color: #f39c12 !important; background: #fffef7; }
+    .order-card {
+      background: white;
+      margin: 12px 16px;
+      padding: 16px;
+      border-radius: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border-right: 4px solid #10b981;
+    }
+    .confirmed-card {
+      border-right-color: #f39c12 !important;
+      background: #fffef7;
+    }
     .order-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: 700; }
-    .order-items { background: #fafafa; padding: 10px; border-radius: 16px; margin: 10px 0; font-size: 14px; }
+    .order-items {
+      background: #fafafa;
+      padding: 10px;
+      border-radius: 16px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
     .order-footer { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-    .fab { position: fixed; bottom: 20px; left: 20px; background: #10b981; color: white; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; z-index: 150; }
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 1000; display: none; }
-    .modal-content { background: white; width: 90%; max-width: 450px; border-radius: 28px; padding: 24px; max-height: 85vh; overflow-y: auto; position: relative; }
-    input, textarea, select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #dbdbdb; border-radius: 16px; font-family: 'Cairo', sans-serif; background: #fafafa; }
-    .btn-primary { background: #10b981; color: white; border: none; padding: 12px; border-radius: 40px; font-weight: 600; width: 100%; cursor: pointer; }
-    .btn-secondary { background: #e5e7eb; color: #1f2937; border: none; padding: 12px; border-radius: 40px; font-weight: 600; width: 100%; cursor: pointer; }
-    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #262626; color: white; padding: 10px 24px; border-radius: 40px; font-size: 14px; z-index: 1100; display: none; }
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #10b981;
+      color: white;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 150;
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      display: none;
+    }
+    .modal-content {
+      background: white;
+      width: 90%;
+      max-width: 450px;
+      border-radius: 28px;
+      padding: 24px;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #dbdbdb;
+      border-radius: 16px;
+      font-family: 'Cairo', sans-serif;
+      background: #fafafa;
+    }
+    .btn-primary {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 40px;
+      font-weight: 600;
+      width: 100%;
+      cursor: pointer;
+    }
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #262626;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-size: 14px;
+      z-index: 1100;
+      display: none;
+    }
     .hidden-product { opacity: 0.6; filter: grayscale(0.2); }
     .no-data { text-align: center; padding: 40px; color: #8e8e8e; }
     .no-data i { font-size: 40px; display: block; margin-bottom: 12px; color: #d1d5db; }
     html, body { width: 100%; overflow-x: hidden; }
     body { font-size: 14px; }
-    @media (max-width: 640px) { body { font-size: 13px; } .products-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 8px; } .product-card img { height: 120px; } .product-info { padding: 6px; } .product-name { font-size: 11px; } .product-price { font-size: 13px; } .btn-icon { padding: 5px; font-size: 11px; } .tab { padding: 5px 12px; font-size: 12px; } .top-bar { padding: 8px 12px; } .logo { font-size: 18px; } .order-card { margin: 8px 12px; padding: 12px; } .modal-content { padding: 16px; width: 95%; } .fab { width: 48px; height: 48px; font-size: 22px; bottom: 15px; left: 15px; } .filter-btn { font-size: 11px; padding: 4px 12px; } .filter-section { padding: 6px 12px; gap: 4px; } .family-actions { left: 0px; } }
-    @media (min-width: 641px) and (max-width: 1024px) { .products-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; } .product-card img { height: 160px; } }
-    @media (min-width: 1025px) { .products-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 16px; } body { max-width: 1400px; margin: 0 auto; } }
-    #pagination { text-align: center; margin: 20px 0; padding: 10px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px; }
-    #pagination button { min-width: 38px; height: 38px; border: none; border-radius: 10px; margin: 0 2px; background: white; color: #333; font-weight: 600; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); cursor: pointer; }
+    @media (max-width: 640px) {
+      body { font-size: 13px; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 8px; }
+      .product-card img { height: 120px; }
+      .product-info { padding: 6px; }
+      .product-name { font-size: 11px; }
+      .product-price { font-size: 13px; }
+      .product-stock { font-size: 10px; }
+      .btn-icon { padding: 5px; font-size: 11px; }
+      .tab { padding: 5px 12px; font-size: 12px; }
+      .top-bar { padding: 8px 12px; }
+      .logo { font-size: 18px; }
+      .order-card { margin: 8px 12px; padding: 12px; }
+      .modal-content { padding: 16px; width: 95%; }
+      .fab { width: 48px; height: 48px; font-size: 22px; bottom: 15px; left: 15px; }
+      .filter-btn { font-size: 11px; padding: 4px 12px; }
+      .filter-section { padding: 6px 12px; gap: 4px; }
+      .family-actions { left: 0px; }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .products-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      .product-card img { height: 160px; }
+    }
+    @media (min-width: 1025px) {
+      .products-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 16px; }
+      body { max-width: 1400px; margin: 0 auto; }
+    }
+    #pagination {
+      text-align: center;
+      margin: 20px 0;
+      padding: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+    }
+    #pagination button {
+      min-width: 38px;
+      height: 38px;
+      border: none;
+      border-radius: 10px;
+      margin: 0 2px;
+      background: white;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      cursor: pointer;
+    }
     #pagination button:hover { transform: translateY(-2px); background: #10b981; color: white; }
     #pagination span { margin: 0 4px; color: #64748b; font-weight: 500; }
     .whatsapp-orders { background: #f0fdf4; border-right-color: #25D366 !important; }
-    .whatsapp-badge { background: #25D366; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; display: inline-block; }
-    .confirmed-badge { background: #f39c12; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; display: inline-block; }
-    .notification-badge { background: #25D366; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; margin-right: 5px; display: inline-block; animation: pulse 1s infinite; }
-    @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
-    .delete-all-btn { background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 30px; margin: 12px; cursor: pointer; font-weight: bold; }
-    .family-field-wrapper { position: relative; width: 100%; margin-bottom: 12px; }
-    .family-field-wrapper select { width: 100%; padding: 12px 16px; padding-left: 48px; border: 1px solid #dbdbdb; border-radius: 16px; font-family: 'Cairo', sans-serif; background: #fafafa; appearance: none; -webkit-appearance: none; outline: none; cursor: pointer; font-size: 14px; }
-    .family-field-wrapper select:focus { border-color: #10b981; }
-    .family-add-btn { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); background: #10b981; color: white; border: none; border-radius: 30px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; transition: 0.2s; z-index: 2; }
-    .family-add-btn:hover { background: #059669; transform: translateY(-50%) scale(1.05); }
-    .family-add-btn i { font-size: 12px; }
-    .discount-modal .modal-content { max-width: 500px; }
-    .discount-modal .form-group { margin-bottom: 12px; }
-    .discount-modal .form-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #374151; }
-    .discount-modal .form-group .hint { font-size: 11px; color: #6b7280; margin-top: 2px; }
-    .discount-modal .checkbox-group { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
-    .discount-modal .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
-    .discount-modal .checkbox-group label { font-weight: 500; font-size: 14px; cursor: pointer; }
-    .discount-modal .date-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .discount-modal .date-fields input[type="datetime-local"] { padding: 10px; }
-    .discount-modal .btn-danger { background: #dc2626; color: white; border: none; padding: 12px; border-radius: 40px; font-weight: 600; width: 100%; cursor: pointer; }
-    .discount-modal .btn-warning { background: #f59e0b; color: white; border: none; padding: 12px; border-radius: 40px; font-weight: 600; width: 100%; cursor: pointer; }
-    .discount-modal .btn-success { background: #10b981; color: white; border: none; padding: 12px; border-radius: 40px; font-weight: 600; width: 100%; cursor: pointer; }
-    #discountsSection { display: none; }
-    .discounts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; padding: 12px; }
-    .discount-card { background: white; border-radius: 20px; padding: 16px; border-right: 6px solid #dc2626; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; transition: 0.2s; }
-    .discount-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-    .discount-card .product-name-discount { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
-    .discount-card .discount-prices { display: flex; align-items: center; gap: 12px; margin: 6px 0; }
-    .discount-card .discount-prices .new-price { color: #dc2626; font-weight: 800; font-size: 1.2rem; }
-    .discount-card .discount-prices .old-price-discount { text-decoration: line-through; color: #9ca3af; font-size: 0.9rem; }
-    .discount-card .discount-timer-card { background: #fee2e2; padding: 4px 12px; border-radius: 30px; font-size: 12px; font-weight: 600; color: #dc2626; display: inline-block; margin-top: 6px; }
-    .discount-card .discount-timer-card.unlimited { background: #dbeafe; color: #2563eb; }
-    .discount-card .discount-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-    .discount-card .discount-actions button { flex: 1; padding: 6px; border: none; border-radius: 30px; font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.2s; }
-    .discount-card .discount-actions .btn-remove-discount { background: #fee2e2; color: #dc2626; }
-    .discount-card .discount-actions .btn-remove-discount:hover { background: #dc2626; color: white; }
-    .discount-card .discount-actions .btn-reactivate { background: #dbeafe; color: #2563eb; }
-    .discount-card .discount-actions .btn-reactivate:hover { background: #2563eb; color: white; }
-    .badge-unlimited { background: #2563eb; color: white; padding: 2px 10px; border-radius: 20px; font-size: 10px; }
-    .badge-expired { background: #6b7280; color: white; padding: 2px 10px; border-radius: 20px; font-size: 10px; }
-    @media (max-width: 640px) { .discounts-grid { grid-template-columns: 1fr; } }
+    .whatsapp-badge {
+      background: #25D366;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      display: inline-block;
+    }
+    .confirmed-badge {
+      background: #f39c12;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      display: inline-block;
+    }
+    .notification-badge {
+      background: #25D366;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 11px;
+      margin-right: 5px;
+      display: inline-block;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .delete-all-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      margin: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* ====== ستايل حقل العائلة الجديد ====== */
+    .family-field-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .family-field-wrapper select {
+      width: 100%;
+      padding: 12px 16px;
+      padding-left: 48px;
+      border: 1px solid #dbdbdb;
+      border-radius: 16px;
+      font-family: 'Cairo', sans-serif;
+      background: #fafafa;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .family-field-wrapper select:focus {
+      border-color: #10b981;
+    }
+    .family-add-btn {
+      position: absolute;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: 0.2s;
+      z-index: 2;
+    }
+    .family-add-btn:hover {
+      background: #059669;
+      transform: translateY(-50%) scale(1.05);
+    }
+    .family-add-btn i {
+      font-size: 12px;
+    }
+    .family-field-wrapper select:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -160,22 +584,24 @@
 
 <div class="tabs" id="tabsContainer" style="display: none;">
   <button class="tab active" data-tab="products">📦 المنتجات</button>
-  <button class="tab" data-tab="discounts">🏷️ التخفيضات</button>
   <button class="tab" data-tab="hidden">🔒 المخفية</button>
   <button class="tab" data-tab="whatsapp">💚 طلبات واتساب <span id="whatsappBadge" class="notification-badge" style="display:none;">0</span></button>
   <button class="tab" data-tab="confirmed">✅ الطلبات المؤكدة <span id="confirmedBadge" style="background:#f39c12; border-radius:20px; padding:2px 8px; font-size:12px; margin-right:5px; display:none;">0</span></button>
 </div>
 
 <div id="productsSection">
+  <!-- ====== شريط فلترة العائلات ====== -->
   <div class="filter-section" id="familyFilterSection">
     <button class="filter-btn active" data-family="الكل" id="filterAll">
       <i class="fas fa-th-list"></i> الكل
       <span class="filter-count" id="countAll">0</span>
     </button>
+    <!-- سيتم إضافة أزرار العائلات هنا بواسطة الجافا سكريبت -->
     <button class="filter-clear" id="clearFilterBtn">
       <i class="fas fa-times"></i> إلغاء التصفية
     </button>
   </div>
+
   <div class="search-box">
     <input type="text" id="searchInput" placeholder="🔍 بحث عن منتج...">
   </div>
@@ -184,19 +610,6 @@
   </div>
   <div class="products-grid" id="productsContainer"></div>
   <div id="pagination"></div>
-</div>
-
-<div id="discountsSection">
-  <div style="padding: 12px; background: #fef3c7; margin: 12px; border-radius: 16px; text-align: center; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-    <div>
-      <i class="fas fa-tags" style="color:#d97706; font-size:20px;"></i>
-      <span style="font-weight:700; margin-right:8px;">إدارة التخفيضات</span>
-    </div>
-    <span style="font-size:13px; color:#92400e;">يمكنك إدارة التخفيضات من خلال أزرار "تخفيض" على المنتجات</span>
-  </div>
-  <div class="discounts-grid" id="discountsContainer">
-    <div class="no-data">لا توجد تخفيضات حالياً</div>
-  </div>
 </div>
 
 <div id="hiddenSection" style="display: none;">
@@ -240,6 +653,7 @@
       <input type="text" id="serial" placeholder="الرقم التسلسلي" required>
       <input type="text" id="name" placeholder="اسم المنتج" required>
       <input type="number" id="price" placeholder="سعر البيع (دج)" required>
+      
       <div class="family-field-wrapper">
         <select id="familySelect">
           <option value="">-- اختر عائلة --</option>
@@ -249,6 +663,7 @@
         </button>
       </div>
       <input type="text" id="newFamilyInput" placeholder="اسم العائلة الجديدة" style="display:none; margin-bottom:8px;">
+      
       <div style="display:flex; gap:8px;">
         <input type="file" id="imageFile" accept="image/*" style="flex:1;">
         <label for="cameraInput" style="background:#efefef; padding:12px; border-radius:16px; cursor:pointer;">📷 كاميرا</label>
@@ -259,48 +674,6 @@
         <button type="button" id="toggleVisibilityBtn" style="display:none; background:orange; border:none; border-radius:40px; padding:0 16px;">👁️ إظهار/إخفاء</button>
       </div>
     </form>
-  </div>
-</div>
-
-<!-- ====== مودال التخفيض ====== -->
-<div id="discountModal" class="modal discount-modal" onclick="closeModalOnOutsideClick(event, 'discountModal')">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <span onclick="closeModal('discountModal')" style="position: absolute; top: 15px; left: 20px; font-size: 24px; cursor: pointer; color: #aaa;">&times;</span>
-    <h3 style="margin-bottom: 18px; color: #dc2626; text-align: center;">🏷️ إدارة التخفيض</h3>
-    <div id="discountFormContainer">
-      <input type="hidden" id="discountProductId">
-      <div class="form-group">
-        <label>المنتج: <span id="discountProductName" style="font-weight:700; color:#10b981;"></span></label>
-      </div>
-      <div class="form-group">
-        <label>السعر بعد التخفيض (دج)</label>
-        <input type="number" id="discountNewPrice" placeholder="أدخل السعر الجديد" required>
-      </div>
-      <div class="form-group">
-        <div class="checkbox-group">
-          <input type="checkbox" id="discountUnlimited">
-          <label for="discountUnlimited">تخفيض بدون وقت محدد (دائم)</label>
-        </div>
-      </div>
-      <div class="form-group" id="discountDateGroup">
-        <label>المدة (من - إلى)</label>
-        <div class="date-fields">
-          <div>
-            <label style="font-weight:400; font-size:12px;">من</label>
-            <input type="datetime-local" id="discountStartDate">
-          </div>
-          <div>
-            <label style="font-weight:400; font-size:12px;">إلى</label>
-            <input type="datetime-local" id="discountEndDate">
-          </div>
-        </div>
-        <div class="hint">⚠️ إذا تركت الحقول فارغة سيتم تفعيل التخفيض فوراً ولن ينتهي تلقائياً.</div>
-      </div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-        <button type="button" id="saveDiscountBtn" class="btn-success" style="flex:2;">💾 حفظ التخفيض</button>
-        <button type="button" id="removeDiscountBtn" class="btn-danger" style="flex:1; display:none;">🗑️ إزالة</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -331,24 +704,13 @@
   </div>
 </div>
 
+<!-- ====== مودال تفاصيل الطلب (جديد) ====== -->
 <div id="orderDetailModal" class="modal" onclick="closeModalOnOutsideClick(event, 'orderDetailModal')">
   <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 700px;">
     <span onclick="closeModal('orderDetailModal')" style="position: absolute; top: 15px; left: 20px; font-size: 28px; cursor: pointer; color: #aaa;">&times;</span>
-    <div id="orderDetailContent"></div>
-  </div>
-</div>
-
-<!-- ====== مودال اختيار طريقة الطباعة (جديد) ====== -->
-<div id="printOptionModal" class="modal" onclick="closeModalOnOutsideClick(event, 'printOptionModal')">
-  <div class="modal-content" onclick="event.stopPropagation()" style="max-width:400px; text-align:center;">
-    <h3 style="margin-bottom:16px;">🖨️ اختر طريقة الطباعة</h3>
-    <button id="thermalPrintBtn" class="btn" style="background:#1e293b; color:white; padding:12px; border-radius:30px; width:100%; margin-bottom:10px; border:none; font-weight:bold; cursor:pointer;">
-      <i class="fas fa-bluetooth"></i> طباعة حرارية (بلوتوث)
-    </button>
-    <button id="normalPrintBtn" class="btn" style="background:#10b981; color:white; padding:12px; border-radius:30px; width:100%; border:none; font-weight:bold; cursor:pointer;">
-      <i class="fas fa-print"></i> طباعة عادية (حاسوب)
-    </button>
-    <button onclick="closeModal('printOptionModal')" style="background:none; border:none; color:#94a3b8; margin-top:16px; cursor:pointer; font-size:14px;">إلغاء</button>
+    <div id="orderDetailContent">
+      <!-- سيتم ملؤه بواسطة JavaScript -->
+    </div>
   </div>
 </div>
 
@@ -357,7 +719,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
   import { getDatabase, ref, onValue, set, remove, update, push, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
   const firebaseConfig = {
     apiKey: "AIzaSyAe1ZmzSkemgaCoqRtKc0Yjn85F36obpsA",
     authDomain: "chcleanstore-596af.firebaseapp.com",
@@ -370,31 +732,18 @@ import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/1
   };
 
   const app = initializeApp(firebaseConfig);
-  // ====== تفعيل الدخول المجهول ======
-const auth = getAuth(app);
-signInAnonymously(auth)
-  .then(() => {
-    console.log("✅ تم الدخول المجهول بنجاح");
-  })
-  .catch((error) => {
-    console.warn("⚠️ فشل الدخول المجهول، لكن الموقع سيستمر في العمل للقراءة فقط:", error);
-  });
-// اجعل auth متاحاً عالمياً إن احتاجه الكود القديم
-window.auth = auth;
   const db = getDatabase(app);
   const productsRef = ref(db, "products");
   const ordersRef = ref(db, "whatsappOrders");
   const confirmedRef = ref(db, "confirmedOrders");
   const invoiceCounterRef = ref(db, "settings/invoiceCounter");
   const familiesRef = ref(db, "families");
-  const discountsRef = ref(db, "discounts");
 
   const IMGBB_KEY = "de6aa0ff092faa292f24c42b6374b8f1";
   const WHATSAPP_NUMBER = "2130775980735";
   const STORE_NAME = "CH Clean Store";
 
   let allProducts = {};
-  let allDiscounts = {};
   let filtered = {};
   let currentPage = 1;
   const PER_PAGE = 20;
@@ -404,14 +753,11 @@ window.auth = auth;
   let newOrdersCount = 0;
   let isWhatsappTabOpen = false;
 
+  // ====== متغيرات العائلات والفلترة ======
   let familiesList = [];
   let editingProductId = null;
   let currentFamilyFilter = 'الكل';
 
-  // ====== متغيرات سياق الطباعة (جديد) ======
-  let printContext = { key: null, order: null, type: null };
-
-  // ====== دوال مساعدة ======
   function showToast(msg) {
     const toast = document.getElementById("toastMessage");
     toast.textContent = msg;
@@ -433,6 +779,7 @@ window.auth = auth;
     const role = getRole();
     const isOwnerRole = role === "owner";
     const isAdminRole = role === "admin";
+    
     const btns = {
       btnCover: isOwnerRole || isAdminRole,
       btnUsers: isOwnerRole,
@@ -440,10 +787,12 @@ window.auth = auth;
       btnDeleteAllProducts: isOwnerRole,
       btnLogout: true
     };
+    
     for (let [id, show] of Object.entries(btns)) {
       const btn = document.getElementById(id);
       if (btn) btn.style.display = show ? "flex" : "none";
     }
+    
     document.getElementById("addProductBtn").style.display = (isOwnerRole || isAdminRole) ? "flex" : "none";
   }
 
@@ -469,16 +818,6 @@ window.auth = auth;
         badge.style.display = "none";
       }
     }
-  }
-
-  function escapeHtml(str) { 
-    if (!str) return '';
-    return String(str).replace(/[&<>]/g, function(m){
-      if(m==='&') return '&amp;'; 
-      if(m==='<') return '&lt;'; 
-      if(m==='>') return '&gt;'; 
-      return m;
-    }); 
   }
 
   // ====== دوال العائلات ======
@@ -542,15 +881,22 @@ window.auth = auth;
     }
   }
 
+  // ====== دوال فلترة العائلات ======
   function renderFamilyFilters() {
     const section = document.getElementById("familyFilterSection");
     if (!section) return;
+    
+    // حذف أزرار العائلات القديمة (باستثناء زر "الكل" وزر "إلغاء التصفية")
     const existingWrappers = section.querySelectorAll('.family-item-wrapper');
     existingWrappers.forEach(el => el.remove());
+    
     const canManage = (isOwner() || isAdmin());
+    
+    // إضافة أزرار لكل عائلة
     familiesList.forEach(({ key, name }) => {
       const wrapper = document.createElement("div");
       wrapper.className = "family-item-wrapper";
+      
       const btn = document.createElement("button");
       btn.className = "filter-btn";
       if (currentFamilyFilter === name) btn.classList.add("active");
@@ -562,10 +908,15 @@ window.auth = auth;
       btn.addEventListener("click", () => {
         filterByFamily(name);
       });
+      
       wrapper.appendChild(btn);
+      
+      // أزرار الإدارة (تعديل وحذف) - فقط للمالك والمدير
       if (canManage) {
         const actions = document.createElement("div");
         actions.className = "family-actions";
+        
+        // زر التعديل
         const editBtn = document.createElement("button");
         editBtn.className = "family-action-btn edit-btn";
         editBtn.innerHTML = `<i class="fas fa-pen"></i>`;
@@ -575,6 +926,8 @@ window.auth = auth;
           editFamilyName(key, name);
         });
         actions.appendChild(editBtn);
+        
+        // زر الحذف
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "family-action-btn delete-btn";
         deleteBtn.innerHTML = `<i class="fas fa-trash"></i>`;
@@ -584,55 +937,78 @@ window.auth = auth;
           deleteFamily(key, name);
         });
         actions.appendChild(deleteBtn);
+        
         wrapper.appendChild(actions);
       }
+      
       section.insertBefore(wrapper, document.getElementById("clearFilterBtn"));
     });
+    
+    // تحديث أعداد المنتجات لكل عائلة
     updateFamilyCounts();
   }
 
+  // ====== دالة تعديل اسم العائلة ======
   async function editFamilyName(key, oldName) {
     const newName = prompt(`تعديل اسم العائلة "${oldName}"`, oldName);
     if (!newName || newName.trim() === oldName) return;
+    
     const trimmedName = newName.trim();
+    
+    // التحقق من عدم وجود عائلة بنفس الاسم
     if (familiesList.some(f => f.name === trimmedName && f.key !== key)) {
       showToast("⚠️ هذه العائلة موجودة بالفعل");
       return;
     }
+    
     try {
+      // تحديث اسم العائلة في Firebase
       await set(ref(db, `families/${key}`), trimmedName);
+      
+      // تحديث جميع المنتجات التي تنتمي لهذه العائلة
       const updates = {};
       Object.entries(allProducts).forEach(([productId, product]) => {
         if (product.family === oldName) {
           updates[`products/${productId}/family`] = trimmedName;
         }
       });
+      
       if (Object.keys(updates).length > 0) {
         await update(ref(db), updates);
       }
+      
       showToast(`✅ تم تغيير اسم العائلة إلى "${trimmedName}"`);
+      
     } catch (error) {
       console.error("خطأ في التعديل:", error);
       showToast("❌ حدث خطأ أثناء التعديل");
     }
   }
 
+  // ====== دالة حذف العائلة ======
   async function deleteFamily(key, familyName) {
     if (!confirm(`⚠️ هل أنت متأكد من حذف عائلة "${familyName}" نهائياً؟\n\nملاحظة: المنتجات التي تنتمي لهذه العائلة ستصبح "غير مصنف"`)) {
       return;
     }
+    
     try {
+      // 1. تحديث جميع المنتجات التي تنتمي لهذه العائلة إلى "غير مصنف"
       const updates = {};
       Object.entries(allProducts).forEach(([productId, product]) => {
         if (product.family === familyName) {
           updates[`products/${productId}/family`] = "";
         }
       });
+      
       if (Object.keys(updates).length > 0) {
         await update(ref(db), updates);
       }
+      
+      // 2. حذف العائلة من Firebase
       await remove(ref(db, `families/${key}`));
+      
       showToast(`✅ تم حذف عائلة "${familyName}"`);
+      
     } catch (error) {
       console.error("خطأ في الحذف:", error);
       showToast("❌ حدث خطأ أثناء الحذف");
@@ -640,9 +1016,12 @@ window.auth = auth;
   }
 
   function updateFamilyCounts() {
+    // تحديث عدد الكل
     const totalProducts = Object.values(allProducts).filter(p => !p.hidden).length;
     const countAll = document.getElementById("countAll");
     if (countAll) countAll.textContent = totalProducts;
+    
+    // تحديث عدد كل عائلة
     familiesList.forEach(({ name }) => {
       const count = Object.values(allProducts).filter(p => !p.hidden && p.family === name).length;
       const countEl = document.getElementById(`count_${escapeHtml(name)}`);
@@ -650,6 +1029,7 @@ window.auth = auth;
     });
   }
 
+  // ====== دوال الفلترة ======
   window.filterByFamily = function(family) {
     currentFamilyFilter = family;
     updateActiveFilters();
@@ -663,10 +1043,13 @@ window.auth = auth;
   };
 
   function updateActiveFilters() {
+    // تحديث الأزرار النشطة
     document.querySelectorAll('.filter-btn').forEach(btn => {
       const family = btn.dataset.family;
       btn.classList.toggle('active', family === currentFamilyFilter);
     });
+    
+    // تحديث زر إلغاء التصفية
     const clearBtn = document.getElementById("clearFilterBtn");
     if (clearBtn) {
       if (currentFamilyFilter === 'الكل') {
@@ -678,14 +1061,21 @@ window.auth = auth;
     }
   }
 
+  // ====== دوال الفلترة والبحث ======
   function applyFiltersAndRender() {
     const searchTerm = document.getElementById("searchInput").value.trim().toLowerCase();
+    
+    // بدء بكل المنتجات
     let result = {...allProducts};
+    
+    // فلترة حسب العائلة - فقط إذا لم تكن 'الكل'
     if (currentFamilyFilter !== 'الكل' && currentFamilyFilter) {
       result = Object.fromEntries(
         Object.entries(result).filter(([_, p]) => p.family === currentFamilyFilter)
       );
     }
+    
+    // فلترة حسب البحث
     if (searchTerm) {
       result = Object.fromEntries(
         Object.entries(result).filter(([_, p]) => 
@@ -694,6 +1084,7 @@ window.auth = auth;
         )
       );
     }
+    
     filtered = result;
     currentPage = 1;
     renderProducts(1);
@@ -704,7 +1095,7 @@ window.auth = auth;
     applyFiltersAndRender();
   }
 
-  // ====== دوال المنتجات والطلبات ======
+  // ====== دوال المنتجات ======
   async function getNextInvoiceNumber() {
     const snapshot = await get(invoiceCounterRef);
     let currentNumber = snapshot.exists() ? snapshot.val() : 0;
@@ -721,7 +1112,9 @@ window.auth = auth;
         quantity: item.quantity,
         price: item.price
     }));
+    
     const totalPrice = items.reduce((sum, it) => sum + (it.price * it.quantity), 0);
+    
     const order = {
         customerName: customerName,
         phone: phone,
@@ -730,57 +1123,27 @@ window.auth = auth;
         totalPrice: totalPrice,
         timestamp: Date.now()
     };
+    
     return push(ordersRef, order);
   }
 
-  // ====== دوال الطباعة الجديدة (مع الخيارات) ======
-  async function confirmOrderOnly(key, order) {
+  async function printAndConfirmOrder(key, order) {
     const currentUserName = localStorage.getItem("user") || "Admin";
     const invoiceNumber = await getNextInvoiceNumber();
     order.invoiceNumber = invoiceNumber;
+    printInvoice(order, currentUserName);
     order.confirmedAt = Date.now();
     order.confirmedBy = currentUserName;
     await set(ref(db, `confirmedOrders/${key}`), order);
     await remove(ref(db, `whatsappOrders/${key}`));
-    showToast("✅ تم تأكيد الطلب");
-    return order;
+    showToast("✅ تم تأكيد الطلب وطباعته ونقله إلى الطلبات المؤكدة");
   }
 
-  function showPrintOptions(key, order, type) {
-    printContext.key = key;
-    printContext.order = order;
-    printContext.type = type; // 'whatsapp' or 'confirmed'
-    document.getElementById('printOptionModal').style.display = 'flex';
-  }
-
-  function printNormal() {
-    const { key, order, type } = printContext;
-    if (type === 'whatsapp') {
-      // تم التأكيد مسبقاً، نطبع فقط
-      const sellerName = localStorage.getItem("user") || "Admin";
-      printInvoice(order, sellerName);
-    } else {
-      const sellerName = localStorage.getItem("user") || "Admin";
-      printConfirmedOrder(order, sellerName);
-    }
-    closeModal('printOptionModal');
-  }
-
-  function printThermal() {
-    // فتح صفحة الطباعة الحرارية
-    window.open('print_invoice.html', '_blank');
-    closeModal('printOptionModal');
-  }
-
-  // ربط أحداث أزرار الطباعة
-  document.getElementById('thermalPrintBtn').addEventListener('click', printThermal);
-  document.getElementById('normalPrintBtn').addEventListener('click', printNormal);
-
-  // ====== دوال الطباعة القديمة (المعدلة) ======
   function printInvoice(order, sellerName) {
     let rows = "";
     let totalQte = 0;
     let itemIndex = 1;
+
     let invoiceNumber = order.invoiceNumber ? order.invoiceNumber.toString().padStart(4, '0') : '----';
 
     if (order.items && Array.isArray(order.items)) {
@@ -789,6 +1152,7 @@ window.auth = auth;
         const price = Number(it.price || 0);
         const total = qty * price;
         totalQte += qty;
+
         rows += `
           <tr>
             <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${itemIndex}</td>
@@ -807,6 +1171,7 @@ window.auth = auth;
     const nbreProduit = order.items ? order.items.length : 0;
 
     const win = window.open('', '_blank');
+
     win.document.write(`
       <!DOCTYPE html>
       <html lang="fr" dir="ltr">
@@ -816,35 +1181,130 @@ window.auth = auth;
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { font-family: 'Cairo', Arial, sans-serif; font-size: 12px; background: white; padding: 10px; }
-          .invoice { max-width: 1000px; margin: 0 auto; border: 2px solid #000; padding: 12px; }
-          .top-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
-          .store-info { display: flex; align-items: center; gap: 10px; width: 55%; }
-          .store-logo img { width: 50px; height: 50px; object-fit: contain; }
-          .store-details h2 { font-size: 14px; font-weight: 900; margin-bottom: 3px; }
-          .store-details p { font-size: 10px; margin: 2px 0; }
-          .client-info { width: 40%; border: 1px solid #000; padding: 6px 10px; line-height: 1.4; font-size: 11px; }
+          body {
+            font-family: 'Cairo', Arial, sans-serif;
+            font-size: 12px;
+            background: white;
+            padding: 10px;
+          }
+          .invoice {
+            max-width: 1000px;
+            margin: 0 auto;
+            border: 2px solid #000;
+            padding: 12px;
+          }
+          .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+          }
+          .store-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 55%;
+          }
+          .store-logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+          }
+          .store-details h2 {
+            font-size: 14px;
+            font-weight: 900;
+            margin-bottom: 3px;
+          }
+          .store-details p {
+            font-size: 10px;
+            margin: 2px 0;
+          }
+          .client-info {
+            width: 40%;
+            border: 1px solid #000;
+            padding: 6px 10px;
+            line-height: 1.4;
+            font-size: 11px;
+          }
           .client-info p { margin: 2px 0; }
-          .info-bar { display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0; font-size: 11px; font-weight: 600; }
-          table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-          th, td { border: 1px solid #000; padding: 2px 4px; font-size: 10px; }
-          th { background: #f4f4f4; font-weight: 700; }
-          .summary-line { margin: 8px 0; text-align: right; font-weight: 600; font-size: 11px; }
-          .bottom-section { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px; border-top: 2px solid #000; padding-top: 10px; }
-          .invoice-number { text-align: right; font-size: 11px; font-weight: bold; }
-          .total-box { text-align: right; }
-          .total-box strong { font-size: 12px; }
-          .total-amount { font-size: 16px; font-weight: 900; }
-          .footer-text { text-align: center; margin-top: 12px; font-size: 10px; font-weight: 500; }
-          @page { @bottom-center { content: "Page : " counter(page) "/" counter(pages); } }
-          @media print { body { padding: 0; } .invoice { border: 2px solid #000; } .no-print { display: none !important; } }
+          .info-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 5px 0;
+            font-size: 11px;
+            font-weight: 600;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+          }
+          th, td {
+            border: 1px solid #000;
+            padding: 2px 4px;
+            font-size: 10px;
+          }
+          th {
+            background: #f4f4f4;
+            font-weight: 700;
+          }
+          .summary-line {
+            margin: 8px 0;
+            text-align: right;
+            font-weight: 600;
+            font-size: 11px;
+          }
+          .bottom-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 15px;
+            border-top: 2px solid #000;
+            padding-top: 10px;
+          }
+          .invoice-number {
+            text-align: right;
+            font-size: 11px;
+            font-weight: bold;
+          }
+          .total-box {
+            text-align: right;
+          }
+          .total-box strong {
+            font-size: 12px;
+          }
+          .total-amount {
+            font-size: 16px;
+            font-weight: 900;
+          }
+          .footer-text {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 10px;
+            font-weight: 500;
+          }
+          @page {
+            @bottom-center {
+              content: "Page : " counter(page) "/" counter(pages);
+            }
+          }
+          @media print {
+            body { padding: 0; }
+            .invoice { border: 2px solid #000; }
+            .no-print { display: none !important; }
+          }
         </style>
       </head>
       <body>
         <div class="invoice">
           <div class="top-header">
             <div class="store-info">
-              <div class="store-logo"><img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo"></div>
+              <div class="store-logo">
+                <img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo">
+              </div>
               <div class="store-details">
                 <h2>CH clean store</h2>
                 <p>Télé : 0775-980-735</p>
@@ -861,12 +1321,18 @@ window.auth = auth;
             <span>le ${new Date().toLocaleDateString('fr-FR')} - ${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</span>
             <span>Préparé par : ${escapeHtml(sellerName || 'KARIM')}</span>
           </div>
+          
           <div style="text-align:center; margin:10px 0; font-weight:bold; font-size:14px;">Bon de livraison</div>
+          
           <table>
-            <thead><tr><th style="width:5%">N°</th><th style="width:10%">Réf</th><th style="width:50%">DESIGNATION</th><th style="width:8%">QTE</th><th style="width:13%">Prix u</th><th style="width:14%">Total</th></tr></thead>
+            <thead>
+              <tr><th style="width:5%">N°</th><th style="width:10%">Réf</th><th style="width:50%">DESIGNATION</th><th style="width:8%">QTE</th><th style="width:13%">Prix u</th><th style="width:14%">Total</th></tr>
+            </thead>
             <tbody>${rows}</tbody>
           </table>
+          
           <div class="summary-line">Nbre Produit : ${nbreProduit} &nbsp;&nbsp;&nbsp; Tot Qté : ${totalQte}</div>
+          
           <div class="bottom-section">
             <div class="invoice-number">bon de livraison N°: ${invoiceNumber}</div>
             <div class="total-box">
@@ -874,6 +1340,7 @@ window.auth = auth;
               <div class="total-amount">${Math.floor(totalPrice)} DA</div>
             </div>
           </div>
+          
           <div class="footer-text">Merci pour votre confiance</div>
         </div>
         <div class="no-print" style="text-align:center; margin:20px 0;">
@@ -883,6 +1350,7 @@ window.auth = auth;
       </body>
       </html>
     `);
+
     win.document.close();
     setTimeout(() => { win.focus(); }, 500);
   }
@@ -891,6 +1359,7 @@ window.auth = auth;
     let rows = "";
     let totalQte = 0;
     let itemIndex = 1;
+
     let invoiceNumber = order.invoiceNumber ? order.invoiceNumber.toString().padStart(4, '0') : '----';
 
     if (order.items && Array.isArray(order.items)) {
@@ -899,11 +1368,12 @@ window.auth = auth;
         const price = Number(it.price || 0);
         const total = qty * price;
         totalQte += qty;
+
         rows += `
           <tr>
             <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${itemIndex}</td>
             <td style="border:1px solid #000; padding:2px 4px; text-align:center;">${escapeHtml(it.serial || '---')}</td>
-            <td style="border:1px solid #000; padding:2px 4px; text-align:right;">${escapeHtml(it.name || '')}</td>
+            <td style="border:1px solid #000; padding:2px 4px; text-align:left;">${escapeHtml(it.name || '')}</td>
             <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${qty}</td>
             <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
             <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
@@ -917,6 +1387,7 @@ window.auth = auth;
     const nbreProduit = order.items ? order.items.length : 0;
 
     const win = window.open('', '_blank');
+
     win.document.write(`
       <!DOCTYPE html>
       <html lang="fr" dir="ltr">
@@ -926,35 +1397,130 @@ window.auth = auth;
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { font-family: 'Cairo', Arial, sans-serif; font-size: 12px; background: white; padding: 10px; }
-          .invoice { max-width: 1000px; margin: 0 auto; border: 2px solid #000; padding: 12px; }
-          .top-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
-          .store-info { display: flex; align-items: center; gap: 10px; width: 55%; }
-          .store-logo img { width: 50px; height: 50px; object-fit: contain; }
-          .store-details h2 { font-size: 14px; font-weight: 900; margin-bottom: 3px; }
-          .store-details p { font-size: 10px; margin: 2px 0; }
-          .client-info { width: 40%; border: 1px solid #000; padding: 6px 10px; line-height: 1.4; font-size: 11px; }
+          body {
+            font-family: 'Cairo', Arial, sans-serif;
+            font-size: 12px;
+            background: white;
+            padding: 10px;
+          }
+          .invoice {
+            max-width: 1000px;
+            margin: 0 auto;
+            border: 2px solid #000;
+            padding: 12px;
+          }
+          .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+          }
+          .store-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 55%;
+          }
+          .store-logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+          }
+          .store-details h2 {
+            font-size: 14px;
+            font-weight: 900;
+            margin-bottom: 3px;
+          }
+          .store-details p {
+            font-size: 10px;
+            margin: 2px 0;
+          }
+          .client-info {
+            width: 40%;
+            border: 1px solid #000;
+            padding: 6px 10px;
+            line-height: 1.4;
+            font-size: 11px;
+          }
           .client-info p { margin: 2px 0; }
-          .info-bar { display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0; font-size: 11px; font-weight: 600; }
-          table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-          th, td { border: 1px solid #000; padding: 2px 4px; font-size: 10px; }
-          th { background: #f4f4f4; font-weight: 700; }
-          .summary-line { margin: 8px 0; text-align: right; font-weight: 600; font-size: 11px; }
-          .bottom-section { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px; border-top: 2px solid #000; padding-top: 10px; }
-          .invoice-number { text-align: right; font-size: 11px; font-weight: bold; }
-          .total-box { text-align: right; }
-          .total-box strong { font-size: 12px; }
-          .total-amount { font-size: 16px; font-weight: 900; }
-          .footer-text { text-align: center; margin-top: 12px; font-size: 10px; font-weight: 500; }
-          @page { @bottom-center { content: "Page : " counter(page) "/" counter(pages); } }
-          @media print { body { padding: 0; } .invoice { border: 2px solid #000; } .no-print { display: none !important; } }
+          .info-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 5px 0;
+            font-size: 11px;
+            font-weight: 600;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+          }
+          th, td {
+            border: 1px solid #000;
+            padding: 2px 4px;
+            font-size: 10px;
+          }
+          th {
+            background: #f4f4f4;
+            font-weight: 700;
+          }
+          .summary-line {
+            margin: 8px 0;
+            text-align: right;
+            font-weight: 600;
+            font-size: 11px;
+          }
+          .bottom-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 15px;
+            border-top: 2px solid #000;
+            padding-top: 10px;
+          }
+          .invoice-number {
+            text-align: right;
+            font-size: 11px;
+            font-weight: bold;
+          }
+          .total-box {
+            text-align: right;
+          }
+          .total-box strong {
+            font-size: 12px;
+          }
+          .total-amount {
+            font-size: 16px;
+            font-weight: 900;
+          }
+          .footer-text {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 10px;
+            font-weight: 500;
+          }
+          @page {
+            @bottom-center {
+              content: "Page : " counter(page) "/" counter(pages);
+            }
+          }
+          @media print {
+            body { padding: 0; }
+            .invoice { border: 2px solid #000; }
+            .no-print { display: none !important; }
+          }
         </style>
       </head>
       <body>
         <div class="invoice">
           <div class="top-header">
             <div class="store-info">
-              <div class="store-logo"><img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo"></div>
+              <div class="store-logo">
+                <img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo">
+              </div>
               <div class="store-details">
                 <h2>CH clean store</h2>
                 <p>Télé : 0775980735</p>
@@ -971,12 +1537,18 @@ window.auth = auth;
             <span>le ${new Date().toLocaleDateString('fr-FR')} - ${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</span>
             <span>Préparé par : ${escapeHtml(sellerName || 'KARIM')}</span>
           </div>
+          
           <div style="text-align:center; margin:10px 0; font-weight:bold; font-size:14px;">Bon de livraison</div>
+          
           <table>
-            <thead><tr><th style="width:5%">N°</th><th style="width:10%">Réf</th><th style="width:50%">DESIGNATION</th><th style="width:8%">QTE</th><th style="width:13%">Prix u</th><th style="width:14%">Total</th></tr></thead>
+            <thead>
+              <tr><th style="width:5%">N°</th><th style="width:10%">Réf</th><th style="width:50%">DESIGNATION</th><th style="width:8%">QTE</th><th style="width:13%">Prix u</th><th style="width:14%">Total</th></tr>
+            </thead>
             <tbody>${rows}</tbody>
           </table>
+          
           <div class="summary-line">Nbre Produit : ${nbreProduit} &nbsp;&nbsp;&nbsp; Tot Qté : ${totalQte}</div>
+          
           <div class="bottom-section">
             <div class="invoice-number">bon de livraison N°: ${invoiceNumber}</div>
             <div class="total-box">
@@ -984,6 +1556,7 @@ window.auth = auth;
               <div class="total-amount">${Math.floor(totalPrice)} DA</div>
             </div>
           </div>
+          
           <div class="footer-text">Merci pour votre confiance</div>
         </div>
         <div class="no-print" style="text-align:center; margin:20px 0;">
@@ -993,11 +1566,11 @@ window.auth = auth;
       </body>
       </html>
     `);
+
     win.document.close();
     setTimeout(() => { win.focus(); }, 500);
   }
 
-  // ====== عرض المنتجات ======
   function renderProducts(page) {
     const container = document.getElementById("productsContainer");
     if (!container) return;
@@ -1024,61 +1597,19 @@ window.auth = auth;
       const card = document.createElement("div");
       card.className = "product-card";
       if(prod.hidden) card.classList.add("hidden-product");
-      
-      const discount = allDiscounts[id];
-      const isOnSale = discount && discount.isActive && 
-        (discount.unlimited || (discount.endDate && new Date(discount.endDate).getTime() > Date.now()));
-      
-      if (isOnSale) {
-        card.classList.add("on-sale");
-        const badge = document.createElement("div");
-        badge.className = "sale-badge";
-        badge.innerHTML = `<i class="fas fa-tags"></i> ${discount.unlimited ? 'تخفيض دائم' : 'تخفيض'}`;
-        card.appendChild(badge);
-      }
-      
-      let priceHtml = `<div class="product-price">${Number(prod.price).toLocaleString()} دج</div>`;
-      if (isOnSale) {
-        priceHtml = `
-          <div class="product-price">
-            <span class="old-price">${Number(prod.price).toLocaleString()} دج</span>
-            ${Number(discount.newPrice).toLocaleString()} دج
-          </div>
-        `;
-        if (!discount.unlimited && discount.endDate) {
-          const timer = document.createElement("div");
-          timer.className = "discount-timer";
-          timer.id = `timer_${id}`;
-          timer.dataset.end = discount.endDate;
-          timer.dataset.productId = id;
-          timer.innerHTML = `<i class="far fa-clock"></i> <span class="time-left">جاري...</span>`;
-        }
-      }
-      
       card.innerHTML = `
         <img src="${prod.imageUrl || 'https://via.placeholder.com/150'}" onerror="this.src='https://via.placeholder.com/150'">
         <div class="product-info">
           <div class="product-name">${escapeHtml(prod.name)}</div>
-          ${priceHtml}
+          <div class="product-price">${Number(prod.price).toLocaleString()} دج</div>
           <div class="product-family">🏷️ ${prod.family || 'غير مصنف'}</div>
-          ${isOnSale && !discount.unlimited && discount.endDate ? `<div class="discount-timer" id="timer_${id}" data-end="${discount.endDate}" data-productid="${id}"><i class="far fa-clock"></i> <span class="time-left">جاري...</span></div>` : ''}
           <div class="product-actions">
             ${canEdit ? `<button class="btn-icon btn-edit" data-id="${id}"><i class="fas fa-edit"></i> تعديل</button>` : ''}
             ${canEdit ? `<button class="btn-icon btn-delete" data-id="${id}"><i class="fas fa-trash"></i> حذف</button>` : ''}
-            ${canEdit ? `<button class="btn-icon btn-discount ${isOnSale ? 'active-discount' : ''}" data-id="${id}"><i class="fas fa-tags"></i> ${isOnSale ? 'تعديل التخفيض' : 'تخفيض'}</button>` : ''}
           </div>
         </div>
       `;
       container.appendChild(card);
-      
-      if (isOnSale && !discount.unlimited && discount.endDate) {
-        const timerEl = document.getElementById(`timer_${id}`);
-        if (timerEl) {
-          timerEl.dataset.end = discount.endDate;
-          timerEl.dataset.productid = id;
-          updateTimer(timerEl);
-        }
-      }
     });
     
     document.querySelectorAll(".btn-edit").forEach(btn => {
@@ -1087,311 +1618,7 @@ window.auth = auth;
     document.querySelectorAll(".btn-delete").forEach(btn => {
       btn.addEventListener("click", (e) => { e.stopPropagation(); deleteProduct(btn.dataset.id); });
     });
-    document.querySelectorAll(".btn-discount").forEach(btn => {
-      btn.addEventListener("click", (e) => { e.stopPropagation(); openDiscountModal(btn.dataset.id); });
-    });
     renderPagination(total);
-  }
-
-  // ====== دوال التخفيضات ======
-  function loadDiscounts() {
-    onValue(discountsRef, (snap) => {
-      const data = snap.val() || {};
-      allDiscounts = data;
-      const now = Date.now();
-      let updated = false;
-      Object.entries(allDiscounts).forEach(([productId, discount]) => {
-        if (discount.isActive && !discount.unlimited && discount.endDate) {
-          if (new Date(discount.endDate).getTime() < now) {
-            const refPath = ref(db, `discounts/${productId}`);
-            update(refPath, { isActive: false }).catch(console.error);
-            updated = true;
-          }
-        }
-      });
-      renderProducts(currentPage);
-      renderDiscountsList();
-    });
-  }
-
-  function renderDiscountsList() {
-  const container = document.getElementById("discountsContainer");
-  if (!container) return;
-  container.innerHTML = "";
-  
-  const activeDiscounts = Object.entries(allDiscounts).filter(([_, d]) => d.isActive);
-  if (activeDiscounts.length === 0) {
-    container.innerHTML = `<div class="no-data" style="grid-column: 1 / -1;"><i class="fas fa-tag"></i> لا توجد تخفيضات نشطة حالياً</div>`;
-    return;
-  }
-  
-  container.className = "products-grid";
-  
-  activeDiscounts.forEach(([productId, discount]) => {
-    const product = allProducts[productId];
-    if (!product) return;
-    
-    const card = document.createElement("div");
-    card.className = "product-card on-sale";
-    
-    let timerText = '';
-    if (discount.unlimited) {
-      timerText = '<span style="color:#2563eb; font-weight:600;"><i class="fas fa-infinity"></i> دائم</span>';
-    } else if (discount.endDate) {
-      const end = new Date(discount.endDate);
-      const now = new Date();
-      const diff = end.getTime() - now.getTime();
-      if (diff > 0) {
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const secs = Math.floor((diff % (1000 * 60)) / 1000);
-        timerText = `⏳ ${days}يوم ${hours}س ${mins}د ${secs}ث`;
-      } else {
-        timerText = '⛔ منتهي';
-      }
-    }
-    
-    const startDate = discount.startDate ? new Date(discount.startDate).toLocaleString('ar-DZ') : '---';
-    const endDate = discount.endDate ? new Date(discount.endDate).toLocaleString('ar-DZ') : 'بدون انتهاء';
-    
-    card.innerHTML = `
-      <div style="position:relative;">
-        <img src="${product.imageUrl || 'https://via.placeholder.com/150'}" style="width:100%; height:180px; object-fit:cover; background:#f0f0f0;">
-        <div class="sale-badge" style="position:absolute; top:8px; right:8px; background:#dc2626; color:#ffdd00; padding:4px 12px; border-radius:30px; font-weight:700; font-size:11px; box-shadow:0 2px 8px rgba(220,38,38,0.3); z-index:5; display:flex; align-items:center; gap:4px;">
-          <i class="fas fa-tags"></i> ${discount.unlimited ? 'دائم' : 'تخفيض'}
-        </div>
-      </div>
-      <div class="product-info">
-        <div class="product-name" style="font-weight:700; font-size:14px; margin-bottom:6px;">${escapeHtml(product.name)}</div>
-        <div class="product-price" style="color:#dc2626; font-weight:800; font-size:1.2rem; margin-bottom:4px;">
-          <span class="old-price" style="text-decoration:line-through; color:#999; font-size:0.8rem; margin-left:6px;">${Number(product.price).toLocaleString()} دج</span>
-          ${Number(discount.newPrice).toLocaleString()} دج
-        </div>
-        <div class="product-family" style="font-size:11px; color:#6b7280; margin-bottom:8px; background:#f3f4f6; padding:2px 10px; border-radius:20px; display:inline-block;">
-          🏷️ ${product.family || 'غير مصنف'}
-        </div>
-        <div style="font-size:12px; color:#6b7280; margin-bottom:6px;">
-          <i class="far fa-calendar-alt"></i> من ${startDate} إلى ${endDate}
-        </div>
-        <div style="font-size:12px; font-weight:600; color:#dc2626; background:#fee2e2; padding:2px 10px; border-radius:20px; display:inline-block; margin-bottom:8px;">
-          ${timerText}
-        </div>
-        <div class="product-actions" style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="btn-icon btn-remove-discount" data-id="${productId}" style="background:#fee2e2; color:#dc2626; flex:1;">
-            <i class="fas fa-trash"></i> إزالة
-          </button>
-          <button class="btn-icon btn-reactivate" data-id="${productId}" style="background:#dbeafe; color:#2563eb; flex:1;">
-            <i class="fas fa-undo"></i> إعادة تفعيل
-          </button>
-        </div>
-      </div>
-    `;
-    
-    container.appendChild(card);
-    
-    card.querySelector('.btn-remove-discount').addEventListener('click', (e) => {
-      e.stopPropagation();
-      removeDiscount(productId);
-    });
-    card.querySelector('.btn-reactivate').addEventListener('click', (e) => {
-      e.stopPropagation();
-      reactivateDiscount(productId);
-    });
-  });
-}
-
-  function openDiscountModal(productId) {
-    const modal = document.getElementById("discountModal");
-    const product = allProducts[productId];
-    if (!product) return;
-    
-    document.getElementById("discountProductId").value = productId;
-    document.getElementById("discountProductName").textContent = product.name;
-    
-    const existing = allDiscounts[productId];
-    if (existing && existing.isActive) {
-      document.getElementById("discountNewPrice").value = existing.newPrice || '';
-      document.getElementById("discountUnlimited").checked = existing.unlimited || false;
-      if (existing.startDate) {
-        document.getElementById("discountStartDate").value = existing.startDate.slice(0, 16);
-      } else {
-        document.getElementById("discountStartDate").value = '';
-      }
-      if (existing.endDate) {
-        document.getElementById("discountEndDate").value = existing.endDate.slice(0, 16);
-      } else {
-        document.getElementById("discountEndDate").value = '';
-      }
-      document.getElementById("removeDiscountBtn").style.display = "inline-block";
-      document.getElementById("saveDiscountBtn").textContent = "💾 تحديث التخفيض";
-    } else {
-      document.getElementById("discountNewPrice").value = '';
-      document.getElementById("discountUnlimited").checked = false;
-      document.getElementById("discountStartDate").value = '';
-      document.getElementById("discountEndDate").value = '';
-      document.getElementById("removeDiscountBtn").style.display = "none";
-      document.getElementById("saveDiscountBtn").textContent = "💾 إضافة تخفيض";
-    }
-    
-    modal.style.display = "flex";
-  }
-
-  async function saveDiscount() {
-    const productId = document.getElementById("discountProductId").value;
-    const newPrice = parseFloat(document.getElementById("discountNewPrice").value);
-    const unlimited = document.getElementById("discountUnlimited").checked;
-    let startDate = document.getElementById("discountStartDate").value;
-    let endDate = document.getElementById("discountEndDate").value;
-    
-    if (!productId || isNaN(newPrice) || newPrice <= 0) {
-      showToast("⚠️ الرجاء إدخال سعر صحيح");
-      return;
-    }
-    
-    const product = allProducts[productId];
-    if (!product) {
-      showToast("⚠️ المنتج غير موجود");
-      return;
-    }
-    
-    if (newPrice >= product.price) {
-      showToast("⚠️ السعر الجديد يجب أن يكون أقل من السعر الأصلي");
-      return;
-    }
-    
-    if (!unlimited) {
-      if (!startDate || !endDate) {
-        showToast("⚠️ الرجاء تحديد تاريخ البداية والنهاية أو اختيار 'بدون وقت محدد'");
-        return;
-      }
-      if (new Date(startDate).getTime() >= new Date(endDate).getTime()) {
-        showToast("⚠️ تاريخ البداية يجب أن يكون قبل تاريخ النهاية");
-        return;
-      }
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      startDate = start.toISOString();
-      endDate = end.toISOString();
-    } else {
-      startDate = null;
-      endDate = null;
-    }
-    
-    try {
-      const discountData = {
-        productId: productId,
-        newPrice: newPrice,
-        unlimited: unlimited,
-        startDate: startDate,
-        endDate: endDate,
-        isActive: true,
-        createdAt: Date.now()
-      };
-      
-      await set(ref(db, `discounts/${productId}`), discountData);
-      showToast("✅ تم حفظ التخفيض بنجاح");
-      closeModal("discountModal");
-    } catch (error) {
-      console.error(error);
-      showToast("❌ حدث خطأ أثناء الحفظ");
-    }
-  }
-
-  async function removeDiscount(productId) {
-    if (!confirm(`⚠️ هل تريد إزالة التخفيض عن هذا المنتج؟`)) return;
-    try {
-      await remove(ref(db, `discounts/${productId}`));
-      showToast("✅ تم إزالة التخفيض");
-    } catch (error) {
-      console.error(error);
-      showToast("❌ حدث خطأ");
-    }
-  }
-
-  async function reactivateDiscount(productId) {
-    try {
-      const snapshot = await get(ref(db, `discounts/${productId}`));
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        data.isActive = true;
-        await set(ref(db, `discounts/${productId}`), data);
-        showToast("✅ تم إعادة تفعيل التخفيض");
-      } else {
-        showToast("⚠️ لا يوجد تخفيض لهذا المنتج");
-      }
-    } catch (error) {
-      console.error(error);
-      showToast("❌ حدث خطأ");
-    }
-  }
-
-  function updateTimer(timerEl) {
-    const endDate = new Date(timerEl.dataset.end);
-    const now = new Date();
-    const diff = endDate.getTime() - now.getTime();
-    const timeSpan = timerEl.querySelector('.time-left');
-    if (!timeSpan) return;
-    
-    if (diff <= 0) {
-      timeSpan.textContent = "انتهى!";
-      timerEl.style.background = "#e5e7eb";
-      timerEl.style.color = "#6b7280";
-      const productId = timerEl.dataset.productid;
-      if (productId && allDiscounts[productId] && allDiscounts[productId].isActive) {
-        const refPath = ref(db, `discounts/${productId}`);
-        update(refPath, { isActive: false }).catch(console.error);
-      }
-      return;
-    }
-    
-    const days = Math.floor(diff / (1000*60*60*24));
-    const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-    const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
-    const secs = Math.floor((diff % (1000*60)) / 1000);
-    let str = '';
-    if (days > 0) str += `${days}يوم `;
-    str += `${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-    timeSpan.textContent = str;
-  }
-
-  function startCountdownTimers() {
-    setInterval(() => {
-      document.querySelectorAll('.discount-timer[data-end]').forEach(el => {
-        updateTimer(el);
-      });
-    }, 1000);
-  }
-
-  function renderHidden() {
-    const container = document.getElementById("hiddenProductsContainer");
-    if (!container) return;
-    container.innerHTML = "";
-    if (getRole() === "seller") {
-      container.innerHTML = "<div class='no-data'>🔒 غير مصرح لك برؤية المنتجات المخفية</div>";
-      return;
-    }
-    const hidden = Object.entries(allProducts).filter(([_,p]) => p.hidden);
-    if(!hidden.length) { container.innerHTML = "<div class='no-data'>لا توجد منتجات مخفية</div>"; return; }
-    hidden.forEach(([id, prod]) => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-      card.innerHTML = `
-        <img src="${prod.imageUrl || 'https://via.placeholder.com/150'}">
-        <div class="product-info">
-          <div class="product-name">${escapeHtml(prod.name)}</div>
-          <div class="product-price">${prod.price} دج</div>
-          <div class="product-family">🏷️ ${prod.family || 'غير مصنف'}</div>
-          <div class="product-actions">
-            <button class="btn-icon btn-edit" data-id="${id}"><i class="fas fa-edit"></i> تعديل</button>
-          </div>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-    document.querySelectorAll("#hiddenProductsContainer .btn-edit").forEach(btn => {
-      btn.addEventListener("click", () => editProduct(btn.dataset.id));
-    });
   }
 
   function renderPagination(total) {
@@ -1441,6 +1668,307 @@ window.auth = auth;
     createBtn("›", currentPage + 1, false, currentPage === total);
   }
 
+  function renderHidden() {
+    const container = document.getElementById("hiddenProductsContainer");
+    if (!container) return;
+    container.innerHTML = "";
+    
+    if (getRole() === "seller") {
+      container.innerHTML = "<div class='no-data'>🔒 غير مصرح لك برؤية المنتجات المخفية</div>";
+      return;
+    }
+    
+    const hidden = Object.entries(allProducts).filter(([_,p]) => p.hidden);
+    if(!hidden.length) { container.innerHTML = "<div class='no-data'>لا توجد منتجات مخفية</div>"; return; }
+    
+    hidden.forEach(([id, prod]) => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = `
+        <img src="${prod.imageUrl || 'https://via.placeholder.com/150'}">
+        <div class="product-info">
+          <div class="product-name">${escapeHtml(prod.name)}</div>
+          <div class="product-price">${prod.price} دج</div>
+          <div class="product-family">🏷️ ${prod.family || 'غير مصنف'}</div>
+          <div class="product-actions">
+            <button class="btn-icon btn-edit" data-id="${id}"><i class="fas fa-edit"></i> تعديل</button>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+    
+    document.querySelectorAll("#hiddenProductsContainer .btn-edit").forEach(btn => {
+      btn.addEventListener("click", () => editProduct(btn.dataset.id));
+    });
+  }
+
+  // ====== عرض طلبات واتساب (بطاقات مختصرة) ======
+  function renderWhatsappOrders(ordersData) {
+    const container = document.getElementById("whatsappOrdersContainer");
+    if (!container) return;
+    container.innerHTML = "";
+    
+    const orders = ordersData || {};
+    const ordersArray = Object.entries(orders);
+    currentOrderCount = ordersArray.length;
+    
+    if (currentOrderCount > lastSeenCount) {
+      newOrdersCount = currentOrderCount - lastSeenCount;
+    } else {
+      newOrdersCount = 0;
+    }
+    updateNotificationBadge();
+    
+    if (ordersArray.length === 0) {
+      container.innerHTML = "<div class='no-data'>💬 لا توجد طلبات واتساب حتى الآن</div>";
+      return;
+    }
+    
+    // عرض البطاقات بترتيب تنازلي (الأحدث أولاً)
+    ordersArray.reverse().forEach(([key, order]) => {
+      const card = document.createElement("div");
+      card.className = "order-card whatsapp-orders";
+      card.style.cursor = "pointer";
+      card.style.transition = "all 0.2s";
+      card.style.borderRight = "4px solid #25D366";
+      
+      // اختصار العنوان إذا كان طويلاً
+      const shortAddress = order.address && order.address.length > 30 
+        ? order.address.substring(0, 27) + "..." 
+        : order.address || "غير محدد";
+      
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-weight: 700; font-size: 16px;">${escapeHtml(order.customerName || 'عميل')}</span>
+            <span class="whatsapp-badge" style="margin-right: 8px;">WhatsApp</span>
+          </div>
+          <span style="color: #10b981; font-weight: 800;">${order.totalPrice.toLocaleString()} دج</span>
+        </div>
+        <div style="display: flex; gap: 12px; font-size: 13px; color: #6b7280; margin-top: 6px;">
+          <span><i class="fas fa-phone"></i> ${escapeHtml(order.phone || '')}</span>
+          <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(shortAddress)}</span>
+        </div>
+        <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">
+          <i class="far fa-clock"></i> ${new Date(order.timestamp).toLocaleString('ar-DZ')}
+        </div>
+        <div style="margin-top: 6px; font-size: 12px; color: #10b981;">
+          <i class="fas fa-chevron-left"></i> اضغط لعرض التفاصيل
+        </div>
+      `;
+      
+      // حدث النقر لفتح المودال
+      card.addEventListener("click", () => {
+        openOrderDetailModal(order, 'whatsapp', key);
+      });
+      
+      container.appendChild(card);
+    });
+  }
+
+  // ====== عرض الطلبات المؤكدة (بطاقات مختصرة) ======
+  function renderConfirmedOrders(confirmedData) {
+    const container = document.getElementById("confirmedOrdersContainer");
+    if (!container) return;
+    container.innerHTML = "";
+    
+    const confirmed = confirmedData || {};
+    const confirmedArray = Object.entries(confirmed);
+    const count = confirmedArray.length;
+    updateConfirmedBadge(count);
+    
+    if (confirmedArray.length === 0) {
+      container.innerHTML = "<div class='no-data'>✅ لا توجد طلبات مؤكدة حتى الآن</div>";
+      return;
+    }
+    
+    confirmedArray.reverse().forEach(([key, order]) => {
+      const card = document.createElement("div");
+      card.className = "order-card confirmed-card";
+      card.style.cursor = "pointer";
+      card.style.transition = "all 0.2s";
+      card.style.borderRight = "4px solid #f39c12";
+      
+      const shortAddress = order.address && order.address.length > 30 
+        ? order.address.substring(0, 27) + "..." 
+        : order.address || "غير محدد";
+      
+      const confirmedDate = order.confirmedAt ? new Date(order.confirmedAt).toLocaleString('ar-DZ') : '---';
+      
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-weight: 700; font-size: 16px;">${escapeHtml(order.customerName || 'عميل')}</span>
+            <span class="confirmed-badge" style="margin-right: 8px;">مؤكد</span>
+          </div>
+          <span style="color: #f39c12; font-weight: 800;">${order.totalPrice.toLocaleString()} دج</span>
+        </div>
+        <div style="display: flex; gap: 12px; font-size: 13px; color: #6b7280; margin-top: 6px;">
+          <span><i class="fas fa-phone"></i> ${escapeHtml(order.phone || '')}</span>
+          <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(shortAddress)}</span>
+        </div>
+        <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">
+          <i class="fas fa-check-circle"></i> بواسطة ${escapeHtml(order.confirmedBy || 'Admin')} | ${confirmedDate}
+        </div>
+        <div style="margin-top: 6px; font-size: 12px; color: #f39c12;">
+          <i class="fas fa-chevron-left"></i> اضغط لعرض التفاصيل
+        </div>
+      `;
+      
+      card.addEventListener("click", () => {
+        openOrderDetailModal(order, 'confirmed', key);
+      });
+      
+      container.appendChild(card);
+    });
+  }
+
+  // ====== فتح مودال تفاصيل الطلب ======
+  function openOrderDetailModal(order, type, key) {
+    const modal = document.getElementById("orderDetailModal");
+    const content = document.getElementById("orderDetailContent");
+    
+    // بناء جدول المنتجات
+    let itemsHtml = "";
+    let totalQte = 0;
+    if (order.items && Array.isArray(order.items)) {
+      order.items.forEach((it, idx) => {
+        const qty = Number(it.quantity || 0);
+        const price = Number(it.price || 0);
+        const total = qty * price;
+        totalQte += qty;
+        itemsHtml += `
+          <tr>
+            <td style="text-align:center; padding: 6px;">${idx+1}</td>
+            <td style="text-align:center;">${escapeHtml(it.serial || '---')}</td>
+            <td>${escapeHtml(it.name)}</td>
+            <td style="text-align:center;">${qty}</td>
+            <td style="text-align:right;">${price.toLocaleString()} دج</td>
+            <td style="text-align:right;">${total.toLocaleString()} دج</td>
+          </tr>
+        `;
+      });
+    }
+    
+    const isWhatsapp = type === 'whatsapp';
+    const statusLabel = isWhatsapp ? 'طلب واتساب' : 'طلب مؤكد';
+    const statusColor = isWhatsapp ? '#25D366' : '#f39c12';
+    
+    // أزرار الإجراءات حسب النوع
+    let actionButtons = '';
+    if (isWhatsapp) {
+      actionButtons = `
+        <button class="confirm-order-detail" data-key="${key}" style="background:#2ecc71; color:white; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; font-weight:600;">
+          <i class="fas fa-check"></i> تأكيد وطباعة
+        </button>
+        <button class="delete-whatsapp-detail" data-key="${key}" style="background:#e74c3c; color:white; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; font-weight:600;">
+          <i class="fas fa-trash"></i> حذف
+        </button>
+      `;
+    } else {
+      actionButtons = `
+        <button class="print-confirmed-detail" data-key="${key}" style="background:#f39c12; color:white; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; font-weight:600;">
+          <i class="fas fa-print"></i> طباعة
+        </button>
+        <button class="delete-confirmed-detail" data-key="${key}" style="background:#e74c3c; color:white; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; font-weight:600;">
+          <i class="fas fa-trash"></i> حذف
+        </button>
+      `;
+    }
+    
+    const confirmedDate = order.confirmedAt ? new Date(order.confirmedAt).toLocaleString('ar-DZ') : '---';
+    
+    content.innerHTML = `
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <h3 style="color: ${statusColor}; margin:0;">${statusLabel}</h3>
+          <span style="background: ${statusColor}; color:white; padding:4px 16px; border-radius:30px; font-weight:600;">${order.totalPrice.toLocaleString()} دج</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; background: #f8fafc; padding: 12px; border-radius: 16px;">
+          <div><strong>العميل:</strong> ${escapeHtml(order.customerName || '')}</div>
+          <div><strong>الهاتف:</strong> ${escapeHtml(order.phone || '')}</div>
+          <div style="grid-column: 1 / -1;"><strong>العنوان:</strong> ${escapeHtml(order.address || '')}</div>
+          ${!isWhatsapp ? `<div style="grid-column: 1 / -1; font-size:12px; color:#6b7280;"><i class="fas fa-check-circle"></i> تم التأكيد بواسطة: ${escapeHtml(order.confirmedBy || 'Admin')} | ${confirmedDate}</div>` : ''}
+        </div>
+        
+        <div style="margin: 16px 0; overflow-x: auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <thead>
+              <tr style="background:#f1f5f9;">
+                <th style="padding:8px; text-align:center;">#</th>
+                <th style="padding:8px; text-align:center;">الرقم التسلسلي</th>
+                <th style="padding:8px; text-align:right;">المنتج</th>
+                <th style="padding:8px; text-align:center;">الكمية</th>
+                <th style="padding:8px; text-align:right;">السعر</th>
+                <th style="padding:8px; text-align:right;">المجموع</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHtml || '<tr><td colspan="6" style="text-align:center; padding:12px;">لا توجد منتجات</td></tr>'}
+            </tbody>
+            <tfoot>
+              <tr style="font-weight:700; background:#f8fafc;">
+                <td colspan="5" style="text-align:left; padding:8px;">الإجمالي الكمي: ${totalQte}</td>
+                <td style="text-align:right; padding:8px; color:#10b981;">${order.totalPrice.toLocaleString()} دج</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; border-top: 1px solid #e5e7eb; padding-top: 16px;">
+          ${actionButtons}
+        </div>
+      </div>
+    `;
+    
+    // ربط أحداث الأزرار داخل المودال
+    modal.style.display = "flex";
+    
+    // تأكيد وطباعة (لطلبات واتساب)
+    const confirmBtn = content.querySelector('.confirm-order-detail');
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', async () => {
+        await printAndConfirmOrder(key, order);
+        closeModal('orderDetailModal');
+      });
+    }
+    
+    // حذف طلب واتساب
+    const deleteWhatsappBtn = content.querySelector('.delete-whatsapp-detail');
+    if (deleteWhatsappBtn) {
+      deleteWhatsappBtn.addEventListener('click', async () => {
+        if (confirm("حذف هذا الطلب نهائياً؟")) {
+          await remove(ref(db, `whatsappOrders/${key}`));
+          showToast("✅ تم حذف الطلب");
+          closeModal('orderDetailModal');
+        }
+      });
+    }
+    
+    // طباعة طلب مؤكد
+    const printConfirmedBtn = content.querySelector('.print-confirmed-detail');
+    if (printConfirmedBtn) {
+      printConfirmedBtn.addEventListener('click', () => {
+        const sellerName = order.confirmedBy || localStorage.getItem("user") || "Admin";
+        printConfirmedOrder(order, sellerName);
+        showToast("🖨️ جاري فتح الطباعة...");
+      });
+    }
+    
+    // حذف طلب مؤكد
+    const deleteConfirmedBtn = content.querySelector('.delete-confirmed-detail');
+    if (deleteConfirmedBtn) {
+      deleteConfirmedBtn.addEventListener('click', async () => {
+        if (confirm("حذف هذا الطلب المؤكد نهائياً؟")) {
+          await remove(ref(db, `confirmedOrders/${key}`));
+          showToast("✅ تم حذف الطلب المؤكد");
+          closeModal('orderDetailModal');
+        }
+      });
+    }
+  }
+
   window.editProduct = (id) => {
     const p = allProducts[id];
     if(!p) return;
@@ -1449,7 +1977,9 @@ window.auth = auth;
     document.getElementById("serial").value = p.serial || "";
     document.getElementById("name").value = p.name || "";
     document.getElementById("price").value = p.price || "";
+    
     setFamilyInForm(p.family || "");
+    
     document.getElementById("formTitle").innerText = "✏️ تعديل المنتج";
     const toggleBtn = document.getElementById("toggleVisibilityBtn");
     toggleBtn.style.display = "inline-block";
@@ -1463,7 +1993,6 @@ window.auth = auth;
     if(product?.deleteUrl) {
       try { await fetch(product.deleteUrl, { mode: 'no-cors' }); } catch(e) {}
     }
-    await remove(ref(db, "discounts/"+id));
     await remove(ref(db, "products/"+id));
     showToast("✅ تم الحذف");
   };
@@ -1482,8 +2011,10 @@ window.auth = auth;
     const serial = document.getElementById("serial").value.trim();
     const name = document.getElementById("name").value.trim();
     const price = parseFloat(document.getElementById("price").value)||0;
+    
     const familySelect = document.getElementById("familySelect");
     const selectedFamily = familySelect.value;
+    
     const fileInput = document.getElementById("imageFile");
     const cameraInput = document.getElementById("cameraInput");
     let selectedFile = fileInput.files[0] || cameraInput.files[0];
@@ -1525,243 +2056,10 @@ window.auth = auth;
     closeModal("productModal");
   }
 
-  // ====== عرض الطلبات ======
-  function renderWhatsappOrders(ordersData) {
-    const container = document.getElementById("whatsappOrdersContainer");
-    if (!container) return;
-    container.innerHTML = "";
-    const orders = ordersData || {};
-    const ordersArray = Object.entries(orders);
-    currentOrderCount = ordersArray.length;
-    if (currentOrderCount > lastSeenCount) {
-      newOrdersCount = currentOrderCount - lastSeenCount;
-    } else {
-      newOrdersCount = 0;
-    }
-    updateNotificationBadge();
-    if (ordersArray.length === 0) {
-      container.innerHTML = "<div class='no-data'>💬 لا توجد طلبات واتساب حتى الآن</div>";
-      return;
-    }
-    ordersArray.reverse().forEach(([key, order]) => {
-      const card = document.createElement("div");
-      card.className = "order-card whatsapp-orders";
-      card.style.cursor = "pointer";
-      card.style.transition = "all 0.2s";
-      card.style.borderRight = "4px solid #25D366";
-      const shortAddress = order.address && order.address.length > 30 
-        ? order.address.substring(0, 27) + "..." 
-        : order.address || "غير محدد";
-      card.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <span style="font-weight: 700; font-size: 16px;">${escapeHtml(order.customerName || 'عميل')}</span>
-            <span class="whatsapp-badge" style="margin-right: 8px;">WhatsApp</span>
-          </div>
-          <span style="color: #10b981; font-weight: 800;">${order.totalPrice.toLocaleString()} دج</span>
-        </div>
-        <div style="display: flex; gap: 12px; font-size: 13px; color: #6b7280; margin-top: 6px;">
-          <span><i class="fas fa-phone"></i> ${escapeHtml(order.phone || '')}</span>
-          <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(shortAddress)}</span>
-        </div>
-        <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">
-          <i class="far fa-clock"></i> ${new Date(order.timestamp).toLocaleString('ar-DZ')}
-        </div>
-        <div style="margin-top: 6px; font-size: 12px; color: #10b981;">
-          <i class="fas fa-chevron-left"></i> اضغط لعرض التفاصيل
-        </div>
-      `;
-      card.addEventListener("click", () => {
-        openOrderDetailModal(order, 'whatsapp', key);
-      });
-      container.appendChild(card);
-    });
-  }
-
-  function renderConfirmedOrders(confirmedData) {
-    const container = document.getElementById("confirmedOrdersContainer");
-    if (!container) return;
-    container.innerHTML = "";
-    const confirmed = confirmedData || {};
-    const confirmedArray = Object.entries(confirmed);
-    const count = confirmedArray.length;
-    updateConfirmedBadge(count);
-    if (confirmedArray.length === 0) {
-      container.innerHTML = "<div class='no-data'>✅ لا توجد طلبات مؤكدة حتى الآن</div>";
-      return;
-    }
-    confirmedArray.reverse().forEach(([key, order]) => {
-      const card = document.createElement("div");
-      card.className = "order-card confirmed-card";
-      card.style.cursor = "pointer";
-      card.style.transition = "all 0.2s";
-      card.style.borderRight = "4px solid #f39c12";
-      const shortAddress = order.address && order.address.length > 30 
-        ? order.address.substring(0, 27) + "..." 
-        : order.address || "غير محدد";
-      const confirmedDate = order.confirmedAt ? new Date(order.confirmedAt).toLocaleString('ar-DZ') : '---';
-      card.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <span style="font-weight: 700; font-size: 16px;">${escapeHtml(order.customerName || 'عميل')}</span>
-            <span class="confirmed-badge" style="margin-right: 8px;">مؤكد</span>
-          </div>
-          <span style="color: #f39c12; font-weight: 800;">${order.totalPrice.toLocaleString()} دج</span>
-        </div>
-        <div style="display: flex; gap: 12px; font-size: 13px; color: #6b7280; margin-top: 6px;">
-          <span><i class="fas fa-phone"></i> ${escapeHtml(order.phone || '')}</span>
-          <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(shortAddress)}</span>
-        </div>
-        <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">
-          <i class="fas fa-check-circle"></i> بواسطة ${escapeHtml(order.confirmedBy || 'Admin')} | ${confirmedDate}
-        </div>
-        <div style="margin-top: 6px; font-size: 12px; color: #f39c12;">
-          <i class="fas fa-chevron-left"></i> اضغط لعرض التفاصيل
-        </div>
-      `;
-      card.addEventListener("click", () => {
-        openOrderDetailModal(order, 'confirmed', key);
-      });
-      container.appendChild(card);
-    });
-  }
-
-  // ====== مودال تفاصيل الطلب (معدل مع خيارات الطباعة) ======
-  function openOrderDetailModal(order, type, key) {
-    const modal = document.getElementById("orderDetailModal");
-    const content = document.getElementById("orderDetailContent");
-    let itemsHtml = "";
-    let totalQte = 0;
-    if (order.items && Array.isArray(order.items)) {
-      order.items.forEach((it, idx) => {
-        const qty = Number(it.quantity || 0);
-        const price = Number(it.price || 0);
-        const total = qty * price;
-        totalQte += qty;
-        itemsHtml += `
-          <tr>
-            <td style="text-align:center; padding: 6px;">${idx+1}</td>
-            <td style="text-align:center;">${escapeHtml(it.serial || '---')}</td>
-            <td>${escapeHtml(it.name)}</td>
-            <td style="text-align:center;">${qty}</td>
-            <td style="text-align:right;">${price.toLocaleString()} دج</td>
-            <td style="text-align:right;">${total.toLocaleString()} دج</td>
-          </tr>
-        `;
-      });
-    }
-    const isWhatsapp = type === 'whatsapp';
-    const statusLabel = isWhatsapp ? 'طلب واتساب' : 'طلب مؤكد';
-    const statusColor = isWhatsapp ? '#25D366' : '#f39c12';
-    let actionButtons = '';
-    if (isWhatsapp) {
-      actionButtons = `
-        <button class="confirm-order-detail" data-key="${key}" style="background:#2ecc71; color:white; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; font-weight:600;">
-          <i class="fas fa-check"></i> تأكيد وطباعة
-        </button>
-        <button class="delete-whatsapp-detail" data-key="${key}" style="background:#e74c3c; color:white; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; font-weight:600;">
-          <i class="fas fa-trash"></i> حذف
-        </button>
-      `;
-    } else {
-      actionButtons = `
-        <button class="print-confirmed-detail" data-key="${key}" style="background:#f39c12; color:white; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; font-weight:600;">
-          <i class="fas fa-print"></i> طباعة
-        </button>
-        <button class="delete-confirmed-detail" data-key="${key}" style="background:#e74c3c; color:white; border:none; padding:10px 20px; border-radius:30px; cursor:pointer; font-weight:600;">
-          <i class="fas fa-trash"></i> حذف
-        </button>
-      `;
-    }
-    const confirmedDate = order.confirmedAt ? new Date(order.confirmedAt).toLocaleString('ar-DZ') : '---';
-    content.innerHTML = `
-      <div style="margin-bottom: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-          <h3 style="color: ${statusColor}; margin:0;">${statusLabel}</h3>
-          <span style="background: ${statusColor}; color:white; padding:4px 16px; border-radius:30px; font-weight:600;">${order.totalPrice.toLocaleString()} دج</span>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; background: #f8fafc; padding: 12px; border-radius: 16px;">
-          <div><strong>العميل:</strong> ${escapeHtml(order.customerName || '')}</div>
-          <div><strong>الهاتف:</strong> ${escapeHtml(order.phone || '')}</div>
-          <div style="grid-column: 1 / -1;"><strong>العنوان:</strong> ${escapeHtml(order.address || '')}</div>
-          ${!isWhatsapp ? `<div style="grid-column: 1 / -1; font-size:12px; color:#6b7280;"><i class="fas fa-check-circle"></i> تم التأكيد بواسطة: ${escapeHtml(order.confirmedBy || 'Admin')} | ${confirmedDate}</div>` : ''}
-        </div>
-        <div style="margin: 16px 0; overflow-x: auto;">
-          <table style="width:100%; border-collapse:collapse; font-size:13px;">
-            <thead>
-              <tr style="background:#f1f5f9;">
-                <th style="padding:8px; text-align:center;">#</th>
-                <th style="padding:8px; text-align:center;">الرقم التسلسلي</th>
-                <th style="padding:8px; text-align:right;">المنتج</th>
-                <th style="padding:8px; text-align:center;">الكمية</th>
-                <th style="padding:8px; text-align:right;">السعر</th>
-                <th style="padding:8px; text-align:right;">المجموع</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml || '<tr><td colspan="6" style="text-align:center; padding:12px;">لا توجد منتجات</td></tr>'}
-            </tbody>
-            <tfoot>
-              <tr style="font-weight:700; background:#f8fafc;">
-                <td colspan="5" style="text-align:left; padding:8px;">الإجمالي الكمي: ${totalQte}</td>
-                <td style="text-align:right; padding:8px; color:#10b981;">${order.totalPrice.toLocaleString()} دج</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; border-top: 1px solid #e5e7eb; padding-top: 16px;">
-          ${actionButtons}
-        </div>
-      </div>
-    `;
-    modal.style.display = "flex";
-    
-    // ====== أحداث الأزرار المعدلة ======
-    const confirmBtn = content.querySelector('.confirm-order-detail');
-    if (confirmBtn) {
-      confirmBtn.addEventListener('click', async () => {
-        // تأكيد الطلب أولاً
-        const confirmedOrder = await confirmOrderOnly(key, order);
-        // ثم إظهار خيارات الطباعة
-        showPrintOptions(key, confirmedOrder, 'confirmed');
-        closeModal('orderDetailModal');
-      });
-    }
-    
-    const deleteWhatsappBtn = content.querySelector('.delete-whatsapp-detail');
-    if (deleteWhatsappBtn) {
-      deleteWhatsappBtn.addEventListener('click', async () => {
-        if (confirm("حذف هذا الطلب نهائياً؟")) {
-          await remove(ref(db, `whatsappOrders/${key}`));
-          showToast("✅ تم حذف الطلب");
-          closeModal('orderDetailModal');
-        }
-      });
-    }
-    
-    const printConfirmedBtn = content.querySelector('.print-confirmed-detail');
-    if (printConfirmedBtn) {
-      printConfirmedBtn.addEventListener('click', () => {
-        showPrintOptions(key, order, 'confirmed');
-      });
-    }
-    
-    const deleteConfirmedBtn = content.querySelector('.delete-confirmed-detail');
-    if (deleteConfirmedBtn) {
-      deleteConfirmedBtn.addEventListener('click', async () => {
-        if (confirm("حذف هذا الطلب المؤكد نهائياً؟")) {
-          await remove(ref(db, `confirmedOrders/${key}`));
-          showToast("✅ تم حذف الطلب المؤكد");
-          closeModal('orderDetailModal');
-        }
-      });
-    }
-  }
-
-  // ====== أحداث المودالات ======
   document.getElementById("addFamilyBtn").addEventListener("click", async function() {
     const select = document.getElementById("familySelect");
     const newFamilyInput = document.getElementById("newFamilyInput");
+    
     if (newFamilyInput.style.display === "none") {
       newFamilyInput.style.display = "block";
       newFamilyInput.focus();
@@ -1769,11 +2067,13 @@ window.auth = auth;
       this.style.background = "#059669";
       return;
     }
+    
     const familyName = newFamilyInput.value.trim();
     if (!familyName) {
       showToast("⚠️ الرجاء إدخال اسم العائلة");
       return;
     }
+    
     const success = await addNewFamily(familyName);
     if (success) {
       newFamilyInput.value = "";
@@ -1795,6 +2095,7 @@ window.auth = auth;
       btn.style.background = "#10b981";
     }
   });
+
   document.getElementById("newFamilyInput").addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -1809,29 +2110,12 @@ window.auth = auth;
     }
   });
 
+  // زر إلغاء التصفية
   document.getElementById("clearFilterBtn").addEventListener("click", clearFamilyFilter);
+  
+  // زر الكل
   document.getElementById("filterAll").addEventListener("click", function() {
     filterByFamily('الكل');
-  });
-
-  document.getElementById("saveDiscountBtn").addEventListener("click", saveDiscount);
-  document.getElementById("removeDiscountBtn").addEventListener("click", function() {
-    const productId = document.getElementById("discountProductId").value;
-    if (productId) {
-      removeDiscount(productId);
-      closeModal("discountModal");
-    }
-  });
-
-  document.getElementById("discountUnlimited").addEventListener("change", function() {
-    const dateGroup = document.getElementById("discountDateGroup");
-    if (this.checked) {
-      dateGroup.style.display = "none";
-      document.getElementById("discountStartDate").value = '';
-      document.getElementById("discountEndDate").value = '';
-    } else {
-      dateGroup.style.display = "block";
-    }
   });
 
   document.getElementById("btnCover")?.addEventListener("click", () => document.getElementById("coverFileInput").click());
@@ -1871,6 +2155,7 @@ window.auth = auth;
     const listDiv = document.getElementById("usersList");
     if(!listDiv) return;
     listDiv.innerHTML = "";
+    
     const ownerSnap = await get(ref(db, "users/owner"));
     if(ownerSnap.exists()) {
       Object.entries(ownerSnap.val()).forEach(([name, val]) => {
@@ -1880,6 +2165,7 @@ window.auth = auth;
         </div>`;
       });
     }
+    
     const adminsSnap = await get(ref(db, "users/admins"));
     if(adminsSnap.exists()) {
       Object.entries(adminsSnap.val()).forEach(([name, val]) => {
@@ -1889,6 +2175,7 @@ window.auth = auth;
         </div>`;
       });
     }
+    
     const sellersSnap = await get(ref(db, "users/sellers"));
     if(sellersSnap.exists()) {
       Object.entries(sellersSnap.val()).forEach(([name, val]) => {
@@ -1898,6 +2185,7 @@ window.auth = auth;
         </div>`;
       });
     }
+    
     if(listDiv.innerHTML === "") {
       listDiv.innerHTML = "<p style='text-align:center; color:#888;'>لا يوجد مستخدمين</p>";
     }
@@ -1925,11 +2213,7 @@ window.auth = auth;
   });
 
   document.getElementById("btnDeleteAllProducts")?.addEventListener("click", async () => {
-    if(confirm("حذف جميع المنتجات نهائياً؟")) { 
-      await remove(productsRef); 
-      await remove(discountsRef);
-      showToast("تم حذف الكل"); 
-    }
+    if(confirm("حذف جميع المنتجات نهائياً؟")) { await remove(productsRef); showToast("تم حذف الكل"); }
   });
 
   document.getElementById("btnLogout")?.addEventListener("click", () => { localStorage.clear(); location.reload(); });
@@ -1980,8 +2264,6 @@ window.auth = auth;
     updateMenuPermissions();
     loadUsersList();
     loadFamilies();
-    loadDiscounts();
-    startCountdownTimers();
     
     if (getRole() === "seller") {
       const hiddenTab = document.querySelector('.tab[data-tab="hidden"]');
@@ -2005,12 +2287,11 @@ window.auth = auth;
         tab.classList.add("active");
         const tabName = tab.dataset.tab;
         document.getElementById("productsSection").style.display = tabName==="products"?"block":"none";
-        document.getElementById("discountsSection").style.display = tabName==="discounts"?"block":"none";
         document.getElementById("hiddenSection").style.display = tabName==="hidden"?"block":"none";
         document.getElementById("whatsappSection").style.display = tabName==="whatsapp"?"block":"none";
         document.getElementById("confirmedSection").style.display = tabName==="confirmed"?"block":"none";
         if(tabName==="hidden") renderHidden();
-        if(tabName==="discounts") renderDiscountsList();
+        
         if (tabName !== "whatsapp") {
           isWhatsappTabOpen = false;
           if (currentOrderCount > lastSeenCount) {
@@ -2047,6 +2328,7 @@ window.auth = auth;
     onValue(ordersRef, (snap) => {
       renderWhatsappOrders(snap.val());
     });
+    
     onValue(confirmedRef, (snap) => {
       renderConfirmedOrders(snap.val());
     });
@@ -2059,6 +2341,16 @@ window.auth = auth;
   });
 
   if(localStorage.getItem("auth")==="true") initApp();
+
+  function escapeHtml(str) { 
+    if (!str) return '';
+    return String(str).replace(/[&<>]/g, function(m){
+      if(m==='&') return '&amp;'; 
+      if(m==='<') return '&lt;'; 
+      if(m==='>') return '&gt;'; 
+      return m;
+    }); 
+  }
 </script>
 </body>
 </html>
