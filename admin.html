@@ -111,7 +111,6 @@
     }
     .tab.active { background: #262626; color: white; }
     
-    /* ====== ستايل فلترة العائلات ====== */
     .filter-section {
       padding: 8px 16px;
       background: white;
@@ -171,7 +170,6 @@
       border-radius: 20px;
     }
 
-    /* ====== ستايل أزرار إدارة العائلات ====== */
     .family-item-wrapper {
       display: inline-flex;
       align-items: center;
@@ -225,14 +223,6 @@
     }
     .family-action-btn i {
       font-size: 11px;
-    }
-    .family-action-btn.edit-btn.active-edit {
-      background: #10b981;
-      color: white;
-    }
-    .family-action-btn.delete-btn.active-delete {
-      background: #dc2626;
-      color: white;
     }
 
     .search-box { 
@@ -505,7 +495,6 @@
       font-weight: bold;
     }
 
-    /* ====== ستايل حقل العائلة الجديد ====== */
     .family-field-wrapper {
       position: relative;
       width: 100%;
@@ -590,13 +579,11 @@
 </div>
 
 <div id="productsSection">
-  <!-- ====== شريط فلترة العائلات ====== -->
   <div class="filter-section" id="familyFilterSection">
     <button class="filter-btn active" data-family="الكل" id="filterAll">
       <i class="fas fa-th-list"></i> الكل
       <span class="filter-count" id="countAll">0</span>
     </button>
-    <!-- سيتم إضافة أزرار العائلات هنا بواسطة الجافا سكريبت -->
     <button class="filter-clear" id="clearFilterBtn">
       <i class="fas fa-times"></i> إلغاء التصفية
     </button>
@@ -704,13 +691,10 @@
   </div>
 </div>
 
-<!-- ====== مودال تفاصيل الطلب (جديد) ====== -->
 <div id="orderDetailModal" class="modal" onclick="closeModalOnOutsideClick(event, 'orderDetailModal')">
   <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 700px;">
     <span onclick="closeModal('orderDetailModal')" style="position: absolute; top: 15px; left: 20px; font-size: 28px; cursor: pointer; color: #aaa;">&times;</span>
-    <div id="orderDetailContent">
-      <!-- سيتم ملؤه بواسطة JavaScript -->
-    </div>
+    <div id="orderDetailContent"></div>
   </div>
 </div>
 
@@ -753,7 +737,6 @@
   let newOrdersCount = 0;
   let isWhatsappTabOpen = false;
 
-  // ====== متغيرات العائلات والفلترة ======
   let familiesList = [];
   let editingProductId = null;
   let currentFamilyFilter = 'الكل';
@@ -820,7 +803,6 @@
     }
   }
 
-  // ====== دوال العائلات ======
   function loadFamilies() {
     onValue(familiesRef, (snap) => {
       const data = snap.val();
@@ -881,22 +863,15 @@
     }
   }
 
-  // ====== دوال فلترة العائلات ======
   function renderFamilyFilters() {
     const section = document.getElementById("familyFilterSection");
     if (!section) return;
-    
-    // حذف أزرار العائلات القديمة (باستثناء زر "الكل" وزر "إلغاء التصفية")
     const existingWrappers = section.querySelectorAll('.family-item-wrapper');
     existingWrappers.forEach(el => el.remove());
-    
     const canManage = (isOwner() || isAdmin());
-    
-    // إضافة أزرار لكل عائلة
     familiesList.forEach(({ key, name }) => {
       const wrapper = document.createElement("div");
       wrapper.className = "family-item-wrapper";
-      
       const btn = document.createElement("button");
       btn.className = "filter-btn";
       if (currentFamilyFilter === name) btn.classList.add("active");
@@ -908,15 +883,10 @@
       btn.addEventListener("click", () => {
         filterByFamily(name);
       });
-      
       wrapper.appendChild(btn);
-      
-      // أزرار الإدارة (تعديل وحذف) - فقط للمالك والمدير
       if (canManage) {
         const actions = document.createElement("div");
         actions.className = "family-actions";
-        
-        // زر التعديل
         const editBtn = document.createElement("button");
         editBtn.className = "family-action-btn edit-btn";
         editBtn.innerHTML = `<i class="fas fa-pen"></i>`;
@@ -926,8 +896,6 @@
           editFamilyName(key, name);
         });
         actions.appendChild(editBtn);
-        
-        // زر الحذف
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "family-action-btn delete-btn";
         deleteBtn.innerHTML = `<i class="fas fa-trash"></i>`;
@@ -937,78 +905,55 @@
           deleteFamily(key, name);
         });
         actions.appendChild(deleteBtn);
-        
         wrapper.appendChild(actions);
       }
-      
       section.insertBefore(wrapper, document.getElementById("clearFilterBtn"));
     });
-    
-    // تحديث أعداد المنتجات لكل عائلة
     updateFamilyCounts();
   }
 
-  // ====== دالة تعديل اسم العائلة ======
   async function editFamilyName(key, oldName) {
     const newName = prompt(`تعديل اسم العائلة "${oldName}"`, oldName);
     if (!newName || newName.trim() === oldName) return;
-    
     const trimmedName = newName.trim();
-    
-    // التحقق من عدم وجود عائلة بنفس الاسم
     if (familiesList.some(f => f.name === trimmedName && f.key !== key)) {
       showToast("⚠️ هذه العائلة موجودة بالفعل");
       return;
     }
-    
     try {
-      // تحديث اسم العائلة في Firebase
       await set(ref(db, `families/${key}`), trimmedName);
-      
-      // تحديث جميع المنتجات التي تنتمي لهذه العائلة
       const updates = {};
       Object.entries(allProducts).forEach(([productId, product]) => {
         if (product.family === oldName) {
           updates[`products/${productId}/family`] = trimmedName;
         }
       });
-      
       if (Object.keys(updates).length > 0) {
         await update(ref(db), updates);
       }
-      
       showToast(`✅ تم تغيير اسم العائلة إلى "${trimmedName}"`);
-      
     } catch (error) {
       console.error("خطأ في التعديل:", error);
       showToast("❌ حدث خطأ أثناء التعديل");
     }
   }
 
-  // ====== دالة حذف العائلة ======
   async function deleteFamily(key, familyName) {
     if (!confirm(`⚠️ هل أنت متأكد من حذف عائلة "${familyName}" نهائياً؟\n\nملاحظة: المنتجات التي تنتمي لهذه العائلة ستصبح "غير مصنف"`)) {
       return;
     }
-    
     try {
-      // 1. تحديث جميع المنتجات التي تنتمي لهذه العائلة إلى "غير مصنف"
       const updates = {};
       Object.entries(allProducts).forEach(([productId, product]) => {
         if (product.family === familyName) {
           updates[`products/${productId}/family`] = "";
         }
       });
-      
       if (Object.keys(updates).length > 0) {
         await update(ref(db), updates);
       }
-      
-      // 2. حذف العائلة من Firebase
       await remove(ref(db, `families/${key}`));
-      
       showToast(`✅ تم حذف عائلة "${familyName}"`);
-      
     } catch (error) {
       console.error("خطأ في الحذف:", error);
       showToast("❌ حدث خطأ أثناء الحذف");
@@ -1016,12 +961,9 @@
   }
 
   function updateFamilyCounts() {
-    // تحديث عدد الكل
     const totalProducts = Object.values(allProducts).filter(p => !p.hidden).length;
     const countAll = document.getElementById("countAll");
     if (countAll) countAll.textContent = totalProducts;
-    
-    // تحديث عدد كل عائلة
     familiesList.forEach(({ name }) => {
       const count = Object.values(allProducts).filter(p => !p.hidden && p.family === name).length;
       const countEl = document.getElementById(`count_${escapeHtml(name)}`);
@@ -1029,7 +971,6 @@
     });
   }
 
-  // ====== دوال الفلترة ======
   window.filterByFamily = function(family) {
     currentFamilyFilter = family;
     updateActiveFilters();
@@ -1043,13 +984,10 @@
   };
 
   function updateActiveFilters() {
-    // تحديث الأزرار النشطة
     document.querySelectorAll('.filter-btn').forEach(btn => {
       const family = btn.dataset.family;
       btn.classList.toggle('active', family === currentFamilyFilter);
     });
-    
-    // تحديث زر إلغاء التصفية
     const clearBtn = document.getElementById("clearFilterBtn");
     if (clearBtn) {
       if (currentFamilyFilter === 'الكل') {
@@ -1061,21 +999,14 @@
     }
   }
 
-  // ====== دوال الفلترة والبحث ======
   function applyFiltersAndRender() {
     const searchTerm = document.getElementById("searchInput").value.trim().toLowerCase();
-    
-    // بدء بكل المنتجات
     let result = {...allProducts};
-    
-    // فلترة حسب العائلة - فقط إذا لم تكن 'الكل'
     if (currentFamilyFilter !== 'الكل' && currentFamilyFilter) {
       result = Object.fromEntries(
         Object.entries(result).filter(([_, p]) => p.family === currentFamilyFilter)
       );
     }
-    
-    // فلترة حسب البحث
     if (searchTerm) {
       result = Object.fromEntries(
         Object.entries(result).filter(([_, p]) => 
@@ -1084,7 +1015,6 @@
         )
       );
     }
-    
     filtered = result;
     currentPage = 1;
     renderProducts(1);
@@ -1095,7 +1025,6 @@
     applyFiltersAndRender();
   }
 
-  // ====== دوال المنتجات ======
   async function getNextInvoiceNumber() {
     const snapshot = await get(invoiceCounterRef);
     let currentNumber = snapshot.exists() ? snapshot.val() : 0;
@@ -1112,9 +1041,7 @@
         quantity: item.quantity,
         price: item.price
     }));
-    
     const totalPrice = items.reduce((sum, it) => sum + (it.price * it.quantity), 0);
-    
     const order = {
         customerName: customerName,
         phone: phone,
@@ -1123,7 +1050,6 @@
         totalPrice: totalPrice,
         timestamp: Date.now()
     };
-    
     return push(ordersRef, order);
   }
 
@@ -1139,11 +1065,11 @@
     showToast("✅ تم تأكيد الطلب وطباعته ونقله إلى الطلبات المؤكدة");
   }
 
+  // ====== دالة الطباعة المعدلة ======
   function printInvoice(order, sellerName) {
     let rows = "";
     let totalQte = 0;
     let itemIndex = 1;
-
     let invoiceNumber = order.invoiceNumber ? order.invoiceNumber.toString().padStart(4, '0') : '----';
 
     if (order.items && Array.isArray(order.items)) {
@@ -1152,15 +1078,18 @@
         const price = Number(it.price || 0);
         const total = qty * price;
         totalQte += qty;
-
         rows += `
           <tr>
             <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${itemIndex}</td>
-            <td style="border:1px solid #000; padding:2px 4px; text-align:center;">${escapeHtml(it.serial || '---')}</td>
-            <td style="border:1px solid #000; padding:2px 4px; text-align:right;">${escapeHtml(it.name || '')}</td>
+            <td style="border:1px solid #000; padding:2px 4px; text-align:center; direction:ltr;">${escapeHtml(it.serial || '---')}</td>
+            <td style="border:1px solid #000; padding:2px 4px; text-align:left; direction:ltr; font-weight:600;">${escapeHtml(it.name || '')}</td>
             <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${qty}</td>
-            <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
-            <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
+            <td style="text-align:right; border:1px solid #000; padding:2px 4px; direction:ltr;">
+              ${price.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} DA
+            </td>
+            <td style="text-align:right; border:1px solid #000; padding:2px 4px; direction:ltr;">
+              ${total.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} DA
+            </td>
           </tr>
         `;
         itemIndex++;
@@ -1171,7 +1100,6 @@
     const nbreProduit = order.items ? order.items.length : 0;
 
     const win = window.open('', '_blank');
-
     win.document.write(`
       <!DOCTYPE html>
       <html lang="fr" dir="ltr">
@@ -1181,130 +1109,38 @@
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          body {
-            font-family: 'Cairo', Arial, sans-serif;
-            font-size: 12px;
-            background: white;
-            padding: 10px;
-          }
-          .invoice {
-            max-width: 1000px;
-            margin: 0 auto;
-            border: 2px solid #000;
-            padding: 12px;
-          }
-          .top-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-          }
-          .store-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 55%;
-          }
-          .store-logo img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-          }
-          .store-details h2 {
-            font-size: 14px;
-            font-weight: 900;
-            margin-bottom: 3px;
-          }
-          .store-details p {
-            font-size: 10px;
-            margin: 2px 0;
-          }
-          .client-info {
-            width: 40%;
-            border: 1px solid #000;
-            padding: 6px 10px;
-            line-height: 1.4;
-            font-size: 11px;
-          }
-          .client-info p { margin: 2px 0; }
-          .info-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding: 5px 0;
-            font-size: 11px;
-            font-weight: 600;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
-          }
-          th, td {
-            border: 1px solid #000;
-            padding: 2px 4px;
-            font-size: 10px;
-          }
-          th {
-            background: #f4f4f4;
-            font-weight: 700;
-          }
-          .summary-line {
-            margin: 8px 0;
-            text-align: right;
-            font-weight: 600;
-            font-size: 11px;
-          }
-          .bottom-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-top: 15px;
-            border-top: 2px solid #000;
-            padding-top: 10px;
-          }
-          .invoice-number {
-            text-align: right;
-            font-size: 11px;
-            font-weight: bold;
-          }
-          .total-box {
-            text-align: right;
-          }
-          .total-box strong {
-            font-size: 12px;
-          }
-          .total-amount {
-            font-size: 16px;
-            font-weight: 900;
-          }
-          .footer-text {
-            text-align: center;
-            margin-top: 12px;
-            font-size: 10px;
-            font-weight: 500;
-          }
-          @page {
-            @bottom-center {
-              content: "Page : " counter(page) "/" counter(pages);
-            }
-          }
-          @media print {
-            body { padding: 0; }
-            .invoice { border: 2px solid #000; }
-            .no-print { display: none !important; }
-          }
+          body { font-family: 'Cairo', Arial, sans-serif; font-size: 12px; background: white; padding: 10px; direction: ltr; }
+          .invoice { max-width: 1000px; margin: 0 auto; border: 2px solid #000; padding: 12px; }
+          .top-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+          .store-info { display: flex; align-items: center; gap: 10px; width: 55%; }
+          .store-logo img { width: 50px; height: 50px; object-fit: contain; }
+          .store-details h2 { font-size: 14px; font-weight: 900; margin-bottom: 3px; }
+          .store-details p { font-size: 10px; margin: 2px 0; }
+          .client-info { width: 40%; border: 1px solid #000; padding: 6px 10px; line-height: 1.4; font-size: 11px; direction: ltr; }
+          .client-info p { margin: 2px 0; text-align: left; }
+          .info-bar { display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0; font-size: 11px; font-weight: 600; direction: ltr; }
+          table { width: 100%; border-collapse: collapse; margin: 10px 0; direction: ltr; }
+          th, td { border: 1px solid #000; padding: 2px 4px; font-size: 11px; }
+          th { background: #f4f4f4; font-weight: 700; text-align: center; }
+          .summary-line { margin: 8px 0; text-align: right; font-weight: 600; font-size: 11px; direction: ltr; }
+          .bottom-section { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px; border-top: 2px solid #000; padding-top: 10px; direction: ltr; }
+          .invoice-number { text-align: right; font-size: 11px; font-weight: bold; }
+          .total-box { text-align: right; }
+          .total-box strong { font-size: 12px; }
+          .total-amount { font-size: 16px; font-weight: 900; }
+          .footer-text { text-align: center; margin-top: 12px; font-size: 10px; font-weight: 500; direction: ltr; }
+          @page { @bottom-center { content: "Page : " counter(page) "/" counter(pages); } }
+          @media print { body { padding: 0; } .invoice { border: 2px solid #000; } .no-print { display: none !important; } }
+          td:nth-child(3) { direction: ltr; text-align: left; font-weight: 600; }
+          td:nth-child(2) { direction: ltr; text-align: center; }
+          td:nth-child(5), td:nth-child(6) { direction: ltr; text-align: right; }
         </style>
       </head>
       <body>
         <div class="invoice">
           <div class="top-header">
             <div class="store-info">
-              <div class="store-logo">
-                <img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo">
-              </div>
+              <div class="store-logo"><img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo"></div>
               <div class="store-details">
                 <h2>CH clean store</h2>
                 <p>Télé : 0775-980-735</p>
@@ -1321,26 +1157,19 @@
             <span>le ${new Date().toLocaleDateString('fr-FR')} - ${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</span>
             <span>Préparé par : ${escapeHtml(sellerName || 'KARIM')}</span>
           </div>
-          
-          <div style="text-align:center; margin:10px 0; font-weight:bold; font-size:14px;">Bon de livraison</div>
-          
+          <div style="text-align:center; margin:10px 0; font-weight:bold; font-size:14px; direction:ltr;">Bon de livraison</div>
           <table>
-            <thead>
-              <tr><th style="width:5%">N°</th><th style="width:10%">Réf</th><th style="width:50%">DESIGNATION</th><th style="width:8%">QTE</th><th style="width:13%">Prix u</th><th style="width:14%">Total</th></tr>
-            </thead>
+            <thead><tr><th style="width:5%">N°</th><th style="width:10%">Réf</th><th style="width:50%">DESIGNATION</th><th style="width:8%">QTE</th><th style="width:13%">Prix u</th><th style="width:14%">Total</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
-          
           <div class="summary-line">Nbre Produit : ${nbreProduit} &nbsp;&nbsp;&nbsp; Tot Qté : ${totalQte}</div>
-          
           <div class="bottom-section">
             <div class="invoice-number">bon de livraison N°: ${invoiceNumber}</div>
             <div class="total-box">
               <div><strong>net à payer</strong></div>
-              <div class="total-amount">${Math.floor(totalPrice)} DA</div>
+              <div class="total-amount">${Math.floor(totalPrice).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</div>
             </div>
           </div>
-          
           <div class="footer-text">Merci pour votre confiance</div>
         </div>
         <div class="no-print" style="text-align:center; margin:20px 0;">
@@ -1350,7 +1179,6 @@
       </body>
       </html>
     `);
-
     win.document.close();
     setTimeout(() => { win.focus(); }, 500);
   }
@@ -1359,7 +1187,6 @@
     let rows = "";
     let totalQte = 0;
     let itemIndex = 1;
-
     let invoiceNumber = order.invoiceNumber ? order.invoiceNumber.toString().padStart(4, '0') : '----';
 
     if (order.items && Array.isArray(order.items)) {
@@ -1368,15 +1195,18 @@
         const price = Number(it.price || 0);
         const total = qty * price;
         totalQte += qty;
-
         rows += `
           <tr>
             <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${itemIndex}</td>
-            <td style="border:1px solid #000; padding:2px 4px; text-align:center;">${escapeHtml(it.serial || '---')}</td>
-            <td style="border:1px solid #000; padding:2px 4px; text-align:left;">${escapeHtml(it.name || '')}</td>
+            <td style="border:1px solid #000; padding:2px 4px; text-align:center; direction:ltr;">${escapeHtml(it.serial || '---')}</td>
+            <td style="border:1px solid #000; padding:2px 4px; text-align:left; direction:ltr; font-weight:600;">${escapeHtml(it.name || '')}</td>
             <td style="text-align:center; border:1px solid #000; padding:2px 4px;">${qty}</td>
-            <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${price.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
-            <td style="text-align:right; border:1px solid #000; padding:2px 4px;">${total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</td>
+            <td style="text-align:right; border:1px solid #000; padding:2px 4px; direction:ltr;">
+              ${price.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} DA
+            </td>
+            <td style="text-align:right; border:1px solid #000; padding:2px 4px; direction:ltr;">
+              ${total.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} DA
+            </td>
           </tr>
         `;
         itemIndex++;
@@ -1387,7 +1217,6 @@
     const nbreProduit = order.items ? order.items.length : 0;
 
     const win = window.open('', '_blank');
-
     win.document.write(`
       <!DOCTYPE html>
       <html lang="fr" dir="ltr">
@@ -1397,130 +1226,38 @@
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          body {
-            font-family: 'Cairo', Arial, sans-serif;
-            font-size: 12px;
-            background: white;
-            padding: 10px;
-          }
-          .invoice {
-            max-width: 1000px;
-            margin: 0 auto;
-            border: 2px solid #000;
-            padding: 12px;
-          }
-          .top-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-          }
-          .store-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 55%;
-          }
-          .store-logo img {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-          }
-          .store-details h2 {
-            font-size: 14px;
-            font-weight: 900;
-            margin-bottom: 3px;
-          }
-          .store-details p {
-            font-size: 10px;
-            margin: 2px 0;
-          }
-          .client-info {
-            width: 40%;
-            border: 1px solid #000;
-            padding: 6px 10px;
-            line-height: 1.4;
-            font-size: 11px;
-          }
-          .client-info p { margin: 2px 0; }
-          .info-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding: 5px 0;
-            font-size: 11px;
-            font-weight: 600;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
-          }
-          th, td {
-            border: 1px solid #000;
-            padding: 2px 4px;
-            font-size: 10px;
-          }
-          th {
-            background: #f4f4f4;
-            font-weight: 700;
-          }
-          .summary-line {
-            margin: 8px 0;
-            text-align: right;
-            font-weight: 600;
-            font-size: 11px;
-          }
-          .bottom-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-top: 15px;
-            border-top: 2px solid #000;
-            padding-top: 10px;
-          }
-          .invoice-number {
-            text-align: right;
-            font-size: 11px;
-            font-weight: bold;
-          }
-          .total-box {
-            text-align: right;
-          }
-          .total-box strong {
-            font-size: 12px;
-          }
-          .total-amount {
-            font-size: 16px;
-            font-weight: 900;
-          }
-          .footer-text {
-            text-align: center;
-            margin-top: 12px;
-            font-size: 10px;
-            font-weight: 500;
-          }
-          @page {
-            @bottom-center {
-              content: "Page : " counter(page) "/" counter(pages);
-            }
-          }
-          @media print {
-            body { padding: 0; }
-            .invoice { border: 2px solid #000; }
-            .no-print { display: none !important; }
-          }
+          body { font-family: 'Cairo', Arial, sans-serif; font-size: 12px; background: white; padding: 10px; direction: ltr; }
+          .invoice { max-width: 1000px; margin: 0 auto; border: 2px solid #000; padding: 12px; }
+          .top-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+          .store-info { display: flex; align-items: center; gap: 10px; width: 55%; }
+          .store-logo img { width: 50px; height: 50px; object-fit: contain; }
+          .store-details h2 { font-size: 14px; font-weight: 900; margin-bottom: 3px; }
+          .store-details p { font-size: 10px; margin: 2px 0; }
+          .client-info { width: 40%; border: 1px solid #000; padding: 6px 10px; line-height: 1.4; font-size: 11px; direction: ltr; }
+          .client-info p { margin: 2px 0; text-align: left; }
+          .info-bar { display: flex; justify-content: space-between; margin-bottom: 15px; padding: 5px 0; font-size: 11px; font-weight: 600; direction: ltr; }
+          table { width: 100%; border-collapse: collapse; margin: 10px 0; direction: ltr; }
+          th, td { border: 1px solid #000; padding: 2px 4px; font-size: 11px; }
+          th { background: #f4f4f4; font-weight: 700; text-align: center; }
+          .summary-line { margin: 8px 0; text-align: right; font-weight: 600; font-size: 11px; direction: ltr; }
+          .bottom-section { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px; border-top: 2px solid #000; padding-top: 10px; direction: ltr; }
+          .invoice-number { text-align: right; font-size: 11px; font-weight: bold; }
+          .total-box { text-align: right; }
+          .total-box strong { font-size: 12px; }
+          .total-amount { font-size: 16px; font-weight: 900; }
+          .footer-text { text-align: center; margin-top: 12px; font-size: 10px; font-weight: 500; direction: ltr; }
+          @page { @bottom-center { content: "Page : " counter(page) "/" counter(pages); } }
+          @media print { body { padding: 0; } .invoice { border: 2px solid #000; } .no-print { display: none !important; } }
+          td:nth-child(3) { direction: ltr; text-align: left; font-weight: 600; }
+          td:nth-child(2) { direction: ltr; text-align: center; }
+          td:nth-child(5), td:nth-child(6) { direction: ltr; text-align: right; }
         </style>
       </head>
       <body>
         <div class="invoice">
           <div class="top-header">
             <div class="store-info">
-              <div class="store-logo">
-                <img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo">
-              </div>
+              <div class="store-logo"><img src="https://i.postimg.cc/DwcBKXC4/1000021552-removebg-preview.png" alt="Logo"></div>
               <div class="store-details">
                 <h2>CH clean store</h2>
                 <p>Télé : 0775980735</p>
@@ -1537,26 +1274,19 @@
             <span>le ${new Date().toLocaleDateString('fr-FR')} - ${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</span>
             <span>Préparé par : ${escapeHtml(sellerName || 'KARIM')}</span>
           </div>
-          
-          <div style="text-align:center; margin:10px 0; font-weight:bold; font-size:14px;">Bon de livraison</div>
-          
+          <div style="text-align:center; margin:10px 0; font-weight:bold; font-size:14px; direction:ltr;">Bon de livraison</div>
           <table>
-            <thead>
-              <tr><th style="width:5%">N°</th><th style="width:10%">Réf</th><th style="width:50%">DESIGNATION</th><th style="width:8%">QTE</th><th style="width:13%">Prix u</th><th style="width:14%">Total</th></tr>
-            </thead>
+            <thead><tr><th style="width:5%">N°</th><th style="width:10%">Réf</th><th style="width:50%">DESIGNATION</th><th style="width:8%">QTE</th><th style="width:13%">Prix u</th><th style="width:14%">Total</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
-          
           <div class="summary-line">Nbre Produit : ${nbreProduit} &nbsp;&nbsp;&nbsp; Tot Qté : ${totalQte}</div>
-          
           <div class="bottom-section">
             <div class="invoice-number">bon de livraison N°: ${invoiceNumber}</div>
             <div class="total-box">
               <div><strong>net à payer</strong></div>
-              <div class="total-amount">${Math.floor(totalPrice)} DA</div>
+              <div class="total-amount">${Math.floor(totalPrice).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</div>
             </div>
           </div>
-          
           <div class="footer-text">Merci pour votre confiance</div>
         </div>
         <div class="no-print" style="text-align:center; margin:20px 0;">
@@ -1566,7 +1296,6 @@
       </body>
       </html>
     `);
-
     win.document.close();
     setTimeout(() => { win.focus(); }, 500);
   }
@@ -1590,9 +1319,7 @@
       renderPagination(0); 
       return; 
     }
-    
     const canEdit = (isOwner() || isAdmin());
-    
     items.forEach(([id, prod]) => {
       const card = document.createElement("div");
       card.className = "product-card";
@@ -1611,7 +1338,6 @@
       `;
       container.appendChild(card);
     });
-    
     document.querySelectorAll(".btn-edit").forEach(btn => {
       btn.addEventListener("click", (e) => { e.stopPropagation(); editProduct(btn.dataset.id); });
     });
@@ -1672,15 +1398,12 @@
     const container = document.getElementById("hiddenProductsContainer");
     if (!container) return;
     container.innerHTML = "";
-    
     if (getRole() === "seller") {
       container.innerHTML = "<div class='no-data'>🔒 غير مصرح لك برؤية المنتجات المخفية</div>";
       return;
     }
-    
     const hidden = Object.entries(allProducts).filter(([_,p]) => p.hidden);
     if(!hidden.length) { container.innerHTML = "<div class='no-data'>لا توجد منتجات مخفية</div>"; return; }
-    
     hidden.forEach(([id, prod]) => {
       const card = document.createElement("div");
       card.className = "product-card";
@@ -1697,47 +1420,37 @@
       `;
       container.appendChild(card);
     });
-    
     document.querySelectorAll("#hiddenProductsContainer .btn-edit").forEach(btn => {
       btn.addEventListener("click", () => editProduct(btn.dataset.id));
     });
   }
 
-  // ====== عرض طلبات واتساب (بطاقات مختصرة) ======
   function renderWhatsappOrders(ordersData) {
     const container = document.getElementById("whatsappOrdersContainer");
     if (!container) return;
     container.innerHTML = "";
-    
     const orders = ordersData || {};
     const ordersArray = Object.entries(orders);
     currentOrderCount = ordersArray.length;
-    
     if (currentOrderCount > lastSeenCount) {
       newOrdersCount = currentOrderCount - lastSeenCount;
     } else {
       newOrdersCount = 0;
     }
     updateNotificationBadge();
-    
     if (ordersArray.length === 0) {
       container.innerHTML = "<div class='no-data'>💬 لا توجد طلبات واتساب حتى الآن</div>";
       return;
     }
-    
-    // عرض البطاقات بترتيب تنازلي (الأحدث أولاً)
     ordersArray.reverse().forEach(([key, order]) => {
       const card = document.createElement("div");
       card.className = "order-card whatsapp-orders";
       card.style.cursor = "pointer";
       card.style.transition = "all 0.2s";
       card.style.borderRight = "4px solid #25D366";
-      
-      // اختصار العنوان إذا كان طويلاً
       const shortAddress = order.address && order.address.length > 30 
         ? order.address.substring(0, 27) + "..." 
         : order.address || "غير محدد";
-      
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div>
@@ -1757,45 +1470,35 @@
           <i class="fas fa-chevron-left"></i> اضغط لعرض التفاصيل
         </div>
       `;
-      
-      // حدث النقر لفتح المودال
       card.addEventListener("click", () => {
         openOrderDetailModal(order, 'whatsapp', key);
       });
-      
       container.appendChild(card);
     });
   }
 
-  // ====== عرض الطلبات المؤكدة (بطاقات مختصرة) ======
   function renderConfirmedOrders(confirmedData) {
     const container = document.getElementById("confirmedOrdersContainer");
     if (!container) return;
     container.innerHTML = "";
-    
     const confirmed = confirmedData || {};
     const confirmedArray = Object.entries(confirmed);
     const count = confirmedArray.length;
     updateConfirmedBadge(count);
-    
     if (confirmedArray.length === 0) {
       container.innerHTML = "<div class='no-data'>✅ لا توجد طلبات مؤكدة حتى الآن</div>";
       return;
     }
-    
     confirmedArray.reverse().forEach(([key, order]) => {
       const card = document.createElement("div");
       card.className = "order-card confirmed-card";
       card.style.cursor = "pointer";
       card.style.transition = "all 0.2s";
       card.style.borderRight = "4px solid #f39c12";
-      
       const shortAddress = order.address && order.address.length > 30 
         ? order.address.substring(0, 27) + "..." 
         : order.address || "غير محدد";
-      
       const confirmedDate = order.confirmedAt ? new Date(order.confirmedAt).toLocaleString('ar-DZ') : '---';
-      
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div>
@@ -1815,21 +1518,16 @@
           <i class="fas fa-chevron-left"></i> اضغط لعرض التفاصيل
         </div>
       `;
-      
       card.addEventListener("click", () => {
         openOrderDetailModal(order, 'confirmed', key);
       });
-      
       container.appendChild(card);
     });
   }
 
-  // ====== فتح مودال تفاصيل الطلب ======
   function openOrderDetailModal(order, type, key) {
     const modal = document.getElementById("orderDetailModal");
     const content = document.getElementById("orderDetailContent");
-    
-    // بناء جدول المنتجات
     let itemsHtml = "";
     let totalQte = 0;
     if (order.items && Array.isArray(order.items)) {
@@ -1850,12 +1548,9 @@
         `;
       });
     }
-    
     const isWhatsapp = type === 'whatsapp';
     const statusLabel = isWhatsapp ? 'طلب واتساب' : 'طلب مؤكد';
     const statusColor = isWhatsapp ? '#25D366' : '#f39c12';
-    
-    // أزرار الإجراءات حسب النوع
     let actionButtons = '';
     if (isWhatsapp) {
       actionButtons = `
@@ -1876,9 +1571,7 @@
         </button>
       `;
     }
-    
     const confirmedDate = order.confirmedAt ? new Date(order.confirmedAt).toLocaleString('ar-DZ') : '---';
-    
     content.innerHTML = `
       <div style="margin-bottom: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
@@ -1891,7 +1584,6 @@
           <div style="grid-column: 1 / -1;"><strong>العنوان:</strong> ${escapeHtml(order.address || '')}</div>
           ${!isWhatsapp ? `<div style="grid-column: 1 / -1; font-size:12px; color:#6b7280;"><i class="fas fa-check-circle"></i> تم التأكيد بواسطة: ${escapeHtml(order.confirmedBy || 'Admin')} | ${confirmedDate}</div>` : ''}
         </div>
-        
         <div style="margin: 16px 0; overflow-x: auto;">
           <table style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
@@ -1915,17 +1607,13 @@
             </tfoot>
           </table>
         </div>
-        
         <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; border-top: 1px solid #e5e7eb; padding-top: 16px;">
           ${actionButtons}
         </div>
       </div>
     `;
-    
-    // ربط أحداث الأزرار داخل المودال
     modal.style.display = "flex";
     
-    // تأكيد وطباعة (لطلبات واتساب)
     const confirmBtn = content.querySelector('.confirm-order-detail');
     if (confirmBtn) {
       confirmBtn.addEventListener('click', async () => {
@@ -1934,7 +1622,6 @@
       });
     }
     
-    // حذف طلب واتساب
     const deleteWhatsappBtn = content.querySelector('.delete-whatsapp-detail');
     if (deleteWhatsappBtn) {
       deleteWhatsappBtn.addEventListener('click', async () => {
@@ -1946,7 +1633,6 @@
       });
     }
     
-    // طباعة طلب مؤكد
     const printConfirmedBtn = content.querySelector('.print-confirmed-detail');
     if (printConfirmedBtn) {
       printConfirmedBtn.addEventListener('click', () => {
@@ -1956,7 +1642,6 @@
       });
     }
     
-    // حذف طلب مؤكد
     const deleteConfirmedBtn = content.querySelector('.delete-confirmed-detail');
     if (deleteConfirmedBtn) {
       deleteConfirmedBtn.addEventListener('click', async () => {
@@ -1977,9 +1662,7 @@
     document.getElementById("serial").value = p.serial || "";
     document.getElementById("name").value = p.name || "";
     document.getElementById("price").value = p.price || "";
-    
     setFamilyInForm(p.family || "");
-    
     document.getElementById("formTitle").innerText = "✏️ تعديل المنتج";
     const toggleBtn = document.getElementById("toggleVisibilityBtn");
     toggleBtn.style.display = "inline-block";
@@ -2011,10 +1694,8 @@
     const serial = document.getElementById("serial").value.trim();
     const name = document.getElementById("name").value.trim();
     const price = parseFloat(document.getElementById("price").value)||0;
-    
     const familySelect = document.getElementById("familySelect");
     const selectedFamily = familySelect.value;
-    
     const fileInput = document.getElementById("imageFile");
     const cameraInput = document.getElementById("cameraInput");
     let selectedFile = fileInput.files[0] || cameraInput.files[0];
@@ -2059,7 +1740,6 @@
   document.getElementById("addFamilyBtn").addEventListener("click", async function() {
     const select = document.getElementById("familySelect");
     const newFamilyInput = document.getElementById("newFamilyInput");
-    
     if (newFamilyInput.style.display === "none") {
       newFamilyInput.style.display = "block";
       newFamilyInput.focus();
@@ -2067,13 +1747,11 @@
       this.style.background = "#059669";
       return;
     }
-    
     const familyName = newFamilyInput.value.trim();
     if (!familyName) {
       showToast("⚠️ الرجاء إدخال اسم العائلة");
       return;
     }
-    
     const success = await addNewFamily(familyName);
     if (success) {
       newFamilyInput.value = "";
@@ -2110,10 +1788,7 @@
     }
   });
 
-  // زر إلغاء التصفية
   document.getElementById("clearFilterBtn").addEventListener("click", clearFamilyFilter);
-  
-  // زر الكل
   document.getElementById("filterAll").addEventListener("click", function() {
     filterByFamily('الكل');
   });
@@ -2155,7 +1830,6 @@
     const listDiv = document.getElementById("usersList");
     if(!listDiv) return;
     listDiv.innerHTML = "";
-    
     const ownerSnap = await get(ref(db, "users/owner"));
     if(ownerSnap.exists()) {
       Object.entries(ownerSnap.val()).forEach(([name, val]) => {
@@ -2165,7 +1839,6 @@
         </div>`;
       });
     }
-    
     const adminsSnap = await get(ref(db, "users/admins"));
     if(adminsSnap.exists()) {
       Object.entries(adminsSnap.val()).forEach(([name, val]) => {
@@ -2175,7 +1848,6 @@
         </div>`;
       });
     }
-    
     const sellersSnap = await get(ref(db, "users/sellers"));
     if(sellersSnap.exists()) {
       Object.entries(sellersSnap.val()).forEach(([name, val]) => {
@@ -2185,7 +1857,6 @@
         </div>`;
       });
     }
-    
     if(listDiv.innerHTML === "") {
       listDiv.innerHTML = "<p style='text-align:center; color:#888;'>لا يوجد مستخدمين</p>";
     }
@@ -2291,7 +1962,6 @@
         document.getElementById("whatsappSection").style.display = tabName==="whatsapp"?"block":"none";
         document.getElementById("confirmedSection").style.display = tabName==="confirmed"?"block":"none";
         if(tabName==="hidden") renderHidden();
-        
         if (tabName !== "whatsapp") {
           isWhatsappTabOpen = false;
           if (currentOrderCount > lastSeenCount) {
@@ -2328,7 +1998,6 @@
     onValue(ordersRef, (snap) => {
       renderWhatsappOrders(snap.val());
     });
-    
     onValue(confirmedRef, (snap) => {
       renderConfirmedOrders(snap.val());
     });
